@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ads Free Youtube</title>
+    <title>YouTube Video Player</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome for icons -->
@@ -427,7 +427,7 @@
 <body>
     <div class="container">
         <div class="header-content">
-            <h1 class="font-bold">YouTube Ads Free Video Player</h1>
+            <h1 class="font-bold">YouTube Video Player</h1>
             <a href="https://instagram.com/ign_saif/" target="_blank" class="control-button icon-only">
                 <i class="fab fa-youtube"></i>
             </a>
@@ -483,15 +483,15 @@
                     <!-- Speed Control -->
                     <div class="custom-select">
                         <select id="speedSelect">
-                            <option value="0.25"> 0.25x</option>
-                            <option value="0.5"> 0.5x</option>
-                            <option value="0.75"> 0.75x</option>
-                            <option value="1" selected> 1x</option>
-                            <option value="1.25"> 1.25x</option>
-                            <option value="1.5"> 1.5x</option>
-                            <option value="1.75"> 1.75x</option>
-                            <option value="2"> 2x</option>
-                            <option value="2.5"> 2.5x</option>
+                            <option value="0.25">Speed 0.25x</option>
+                            <option value="0.5">Speed 0.5x</option>
+                            <option value="0.75">Speed 0.75x</option>
+                            <option value="1" selected>Speed 1x</option>
+                            <option value="1.25">Speed 1.25x</option>
+                            <option value="1.5">Speed 1.5x</option>
+                            <option value="1.75">Speed 1.75x</option>
+                            <option value="2">Speed 2x</option>
+                            <option value="2.5">Speed 2.5x</option>
                         </select>
                     </div>
 
@@ -589,7 +589,11 @@
                     'iv_load_policy': 3, // Hide video annotations by default
                     'showinfo': 0, // Hide video title and uploader before the video starts playing
                     'autohide': 1, // Hide controls after a few seconds of inactivity
-                    'disablekb': 1 // Disable keyboard controls (we'll implement our own)
+                    'disablekb': 1, // Disable keyboard controls (we'll implement our own)
+                    // Added parameter to reduce ads. Note: Complete ad removal is not possible via API.
+                    'cc_load_policy': 0, // Disable closed captions by default
+                    'fs': 1, // Enable fullscreen button
+                    'origin': window.location.origin // Helps with some API calls and security
                 },
                 events: {
                     'onReady': onPlayerReady,
