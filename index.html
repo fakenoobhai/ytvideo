@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Video Player</title>
+    <title>Ads free YouTube Video player</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome for icons -->
@@ -15,59 +15,59 @@
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #0f172a, #1e293b); /* Deeper dark gradient */
             display: flex;
-            flex-direction: column; /* Changed to column to place footer at bottom */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
             color: #e2e8f0;
-            padding: 1rem; /* Add some padding for smaller screens */
+            padding: 1rem;
         }
         .container {
             background-color: #1a202c; /* Darker background for container */
-            border-radius: 2rem; /* Even more rounded corners */
+            border-radius: 2rem;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
-            padding: 3rem; /* Increased padding */
-            max-width: 95%; /* More flexible width */
-            width: 900px; /* Slightly wider for better presentation */
+            padding: 3rem;
+            max-width: 95%;
+            width: 900px;
             display: flex;
             flex-direction: column;
-            gap: 2rem; /* Increased gap between sections */
-            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
-            margin-bottom: 2rem; /* Space for footer */
+            gap: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 2rem;
         }
         .header-content {
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-wrap: wrap; /* Allow wrapping on smaller screens */
-            gap: 1rem; /* Space between heading and button */
+            flex-wrap: wrap;
+            gap: 1rem;
             margin-bottom: 1.5rem;
         }
         h1 {
             font-size: 2.5rem;
-            font-weight: 800; /* Already bold, but added font-bold class for clarity */
+            font-weight: 800;
             text-align: center;
-            color: #a78bfa; /* Vibrant title color */
+            color: #a78bfa;
             text-shadow: 0 0 10px rgba(167, 139, 250, 0.5);
-            margin: 0; /* Remove default margin to control spacing with flexbox */
+            margin: 0;
         }
 
         /* Video Player Wrapper for Overlay Controls */
         .video-player-wrapper {
             position: relative;
             width: 100%;
-            aspect-ratio: 16 / 9; /* Maintain 16:9 aspect ratio */
+            aspect-ratio: 16 / 9;
             border-radius: 1.5rem;
             overflow: hidden;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-            background-color: #000; /* Fallback background for player area */
+            background-color: #000;
         }
 
         #player-container {
             width: 100%;
             height: 100%;
-            position: relative; /* Needed for iframe positioning */
+            position: relative;
         }
 
         #player-container iframe {
@@ -76,7 +76,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            border-radius: 1.5rem; /* Match wrapper border-radius */
+            border-radius: 1.5rem;
         }
 
         /* Overlay Controls Styling */
@@ -85,15 +85,15 @@
             bottom: 0;
             left: 0;
             right: 0;
-            padding: 0.3rem 0.8rem; /* Even smaller padding for overlay */
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0)); /* Gradient fade from bottom */
-            opacity: 0; /* Initially hidden */
-            visibility: hidden; /* Hidden from screen readers and interaction when opacity is 0 */
+            padding: 0.3rem 0.8rem;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0));
+            opacity: 0;
+            visibility: hidden;
             transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-            z-index: 10; /* Ensure controls are on top of video */
+            z-index: 10;
             display: flex;
             flex-direction: column;
-            gap: 0.6rem; /* Slightly smaller gap */
+            gap: 0.6rem;
         }
 
         /* Class to be toggled by JS for clicks/taps/hover */
@@ -104,27 +104,27 @@
 
 
         .control-button {
-            background: linear-gradient(145deg, #7c3aed, #a78bfa); /* More vibrant gradient */
-            color: black; /* Set font color to black for all control buttons */
-            padding: 0.6rem 1.2rem; /* Smaller padding for buttons */
+            background: linear-gradient(145deg, #7c3aed, #a78bfa);
+            color: black;
+            padding: 0.6rem 1.2rem;
             border-radius: 9999px;
-            font-weight: 700; /* Bolder text */
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother transition */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Slightly smaller shadow */
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.6rem; /* More space for icon and text */
+            gap: 0.6rem;
             cursor: pointer;
             border: none;
             outline: none;
-            text-transform: uppercase; /* Uppercase text */
-            letter-spacing: 0.05em; /* Slight letter spacing */
-            font-size: 0.9rem; /* Slightly smaller font size */
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.9rem;
         }
         .control-button:hover {
-            background: linear-gradient(145deg, #a78bfa, #7c3aed); /* Reverse gradient on hover */
-            transform: translateY(-2px) scale(1.01); /* Less pronounced lift and slight scale */
+            background: linear-gradient(145deg, #a78bfa, #7c3aed);
+            transform: translateY(-2px) scale(1.01);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
         }
         .control-button:active {
@@ -133,22 +133,22 @@
         }
         /* Specific styling for buttons that only have icons */
         .control-button.icon-only {
-            width: 32px; /* Even smaller fixed width for icon-only buttons */
-            height: 32px; /* Even smaller fixed height for icon-only buttons */
-            padding: 0; /* Remove padding */
-            font-size: 1rem; /* Smaller icon size */
-            border-radius: 50%; /* Make them perfectly round */
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            font-size: 1rem;
+            border-radius: 50%;
         }
         .progress-bar-wrapper {
             display: flex;
             align-items: center;
-            gap: 0.8rem; /* Slightly smaller gap */
+            gap: 0.8rem;
             width: 100%;
         }
         .progress-bar-container {
-            flex-grow: 1; /* Takes available space */
-            height: 0.5rem; /* Even thinner progress bar for overlay */
-            background-color: rgba(51, 65, 85, 0.7); /* Slightly transparent background for bar */
+            flex-grow: 1;
+            height: 0.5rem;
+            background-color: rgba(51, 65, 85, 0.7);
             border-radius: 9999px;
             position: relative;
             cursor: pointer;
@@ -156,7 +156,6 @@
         }
         .progress-bar {
             height: 100%;
-            /* Changed to match button gradient colors */
             background: linear-gradient(90deg, #7c3aed, #a78bfa);
             border-radius: 9999px;
             width: 0%;
@@ -171,22 +170,22 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.1); /* Subtle highlight */
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 9999px;
         }
         .time-display {
-            font-size: 0.8rem; /* Even smaller font for time */
+            font-size: 0.8rem;
             font-weight: 600;
-            color: #cbd5e1; /* Lighter text for time */
-            min-width: 80px; /* Ensure space for time */
+            color: #cbd5e1;
+            min-width: 80px;
             text-align: right;
             text-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
         .volume-slider {
-            width: 100%; /* Make it take full width of its container */
+            width: 100%;
             -webkit-appearance: none;
-            height: 0.35rem; /* Even thinner slider track */
-            background: rgba(51, 65, 85, 0.7); /* Transparent background */
+            height: 0.35rem;
+            background: rgba(51, 65, 85, 0.7);
             border-radius: 9999px;
             outline: none;
             transition: background 0.2s ease-in-out;
@@ -194,7 +193,7 @@
         .volume-slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 1rem; /* Even smaller thumb */
+            width: 1rem;
             height: 1rem;
             background: linear-gradient(145deg, #ec4899, #8b5cf6);
             border-radius: 50%;
@@ -218,11 +217,11 @@
             transform: scale(1.1);
         }
 
-        /* Custom select for quality/speed */
+        /* Custom select for speed */
         .custom-select {
             position: relative;
             display: inline-block;
-            min-width: 90px; /* Even smaller min-width for selects */
+            min-width: 90px;
         }
 
         .custom-select select {
@@ -230,9 +229,9 @@
             -webkit-appearance: none;
             -moz-appearance: none;
             width: 100%;
-            padding: 0.4rem 0.8rem; /* Even smaller padding for selects */
+            padding: 0.4rem 0.8rem;
             background: linear-gradient(145deg, #7c3aed, #a78bfa);
-            color: black; /* Set font color to black for custom selects */
+            color: black;
             border: none;
             border-radius: 9999px;
             font-weight: 700;
@@ -242,7 +241,7 @@
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            font-size: 0.8rem; /* Even smaller font size */
+            font-size: 0.8rem;
         }
 
         .custom-select select:hover {
@@ -256,41 +255,41 @@
             font-family: 'Font Awesome 6 Free';
             font-weight: 900;
             position: absolute;
-            right: 0.6rem; /* Adjusted caret position */
+            right: 0.6rem;
             top: 50%;
             transform: translateY(-50%);
             color: white;
             pointer-events: none;
-            font-size: 0.8rem; /* Even smaller caret */
+            font-size: 0.8rem;
         }
 
         /* Progress Bar Tooltip */
-        .progress-tooltip, .volume-tooltip { /* Combined styling for both tooltips */
+        .progress-tooltip, .volume-tooltip {
             position: absolute;
-            top: -20px; /* Position above the bar/slider */
+            top: -20px;
             background-color: rgba(0, 0, 0, 0.8);
             color: white;
             padding: 2px 6px;
             border-radius: 3px;
             font-size: 0.7rem;
             white-space: nowrap;
-            transform: translateX(-50%); /* Center the tooltip above the mouse */
+            transform: translateX(-50%);
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.2s ease, visibility 0.2s ease;
-            pointer-events: none; /* Allow clicks to pass through to the element below */
-            z-index: 11; /* Ensure it's above other elements */
+            pointer-events: none;
+            z-index: 11;
         }
 
         /* New video input and button styling */
-        .video-input-group {
+        .input-group {
             display: flex;
             gap: 1rem;
             align-items: center;
-            margin-top: 1.5rem; /* Space above video player */
-            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
         }
-        .video-input-group input[type="text"] {
+        .input-group input[type="text"] {
             flex-grow: 1;
             padding: 0.7rem 1.4rem;
             border-radius: 9999px;
@@ -302,12 +301,12 @@
             box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
-        .video-input-group input[type="text"]:focus {
+        .input-group input[type="text"]:focus {
             border-color: #a78bfa;
             box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.3);
         }
-        .video-input-group .control-button {
-            padding: 0.7rem 1.8rem; /* Match other buttons */
+        .input-group .control-button {
+            padding: 0.7rem 1.8rem;
             font-size: 0.9rem;
         }
 
@@ -330,7 +329,7 @@
 
         .volume-slider-container {
             position: relative;
-            width: 100px; /* Set a fixed width for the container */
+            width: 100px;
         }
 
         /* Responsive adjustments for overlay controls */
@@ -345,81 +344,82 @@
             h1 {
                 font-size: 1.8rem;
             }
-            .video-input-group {
+            .input-group {
                 flex-direction: column;
                 gap: 0.8rem;
             }
-            .video-input-group input[type="text"] {
+            .input-group input[type="text"] {
                 width: 100%;
             }
-            .video-input-group .control-button {
+            .input-group .control-button {
                 width: 100%;
-                padding: 0.5rem 1rem; /* Smaller padding for mobile buttons */
-                font-size: 0.75rem; /* Smaller font size for mobile buttons */
+                padding: 0.5rem 1rem;
+                font-size: 0.75rem;
             }
+            /* Adjust overlay padding for smaller screens */
             .video-overlay-controls {
-                padding: 0.3rem 0.5rem; /* Even smaller padding for mobile overlay */
+                padding: 0.2rem 0.4rem; /* Reduced padding */
             }
             .controls-row {
-                flex-direction: row; /* Keep controls in a row on mobile */
-                justify-content: space-around; /* Distribute space evenly */
+                flex-direction: row;
+                justify-content: space-around;
                 align-items: center;
-                gap: 0.3rem; /* Smaller gap between controls */
+                gap: 0.2rem; /* Reduced gap */
             }
 
             /* Main control buttons (play/pause, mute, fullscreen) */
             .control-button, .control-button.icon-only {
-                width: 28px; /* Fixed width for mobile buttons */
-                height: 28px; /* Fixed height for mobile buttons */
-                font-size: 0.9rem; /* Adjust icon size */
-                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Even smaller shadow for mobile */
+                width: 26px; /* Reduced size */
+                height: 26px; /* Reduced size */
+                font-size: 0.8rem; /* Reduced font size */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
             }
 
-            /* Custom selects (Speed, Quality) */
+            /* Custom selects (Speed) */
             .custom-select {
-                flex-grow: 1; /* Allow selects to grow */
-                min-width: 60px; /* Even smaller min-width for selects */
+                flex-grow: 1;
+                min-width: 50px; /* Reduced min-width */
             }
             .custom-select select {
-                padding: 0.2rem 0.4rem; /* Adjust padding for selects to be more compact */
-                font-size: 0.65rem; /* Smaller font for select options */
+                padding: 0.2rem 0.3rem; /* Reduced padding */
+                font-size: 0.6rem; /* Reduced font size */
             }
             .custom-select::after {
-                right: 0.3rem; /* Adjusted caret position */
-                font-size: 0.55rem; /* Smaller caret */
+                right: 0.2rem; /* Adjusted arrow position */
+                font-size: 0.5rem; /* Reduced arrow size */
             }
 
             /* Volume control specific adjustments */
             .volume-control {
                 width: auto;
                 flex-grow: 1;
-                justify-content: flex-start; /* Align to start */
-                gap: 0.2rem; /* Smaller gap in volume control */
+                justify-content: flex-start;
+                gap: 0.1rem; /* Reduced gap */
             }
             .volume-slider-container {
-                width: 100%; /* Take full available width */
-                max-width: 80px; /* Limit max width for slider */
+                width: 100%;
+                max-width: 70px; /* Reduced max-width */
             }
             .volume-slider {
-                height: 0.25rem; /* Even thinner slider track on mobile */
+                height: 0.2rem; /* Reduced height */
             }
             .volume-slider::-webkit-slider-thumb, .volume-slider::-moz-range-thumb {
-                width: 0.8rem; /* Even smaller thumb */
-                height: 0.8rem;
+                width: 0.7rem; /* Reduced thumb size */
+                height: 0.7rem; /* Reduced thumb size */
             }
 
             /* Time display and progress bar */
             .time-display {
-                font-size: 0.6rem; /* Even smaller font for time */
-                min-width: 55px;
+                font-size: 0.55rem; /* Reduced font size */
+                min-width: 50px; /* Adjusted min-width */
             }
             .progress-bar-container {
-                height: 0.25rem; /* Even thinner progress bar */
+                height: 0.2rem; /* Reduced height */
             }
             .progress-tooltip, .volume-tooltip {
-                font-size: 0.55rem; /* Even smaller tooltip font */
-                top: -12px; /* Adjust tooltip position */
-                padding: 1px 4px;
+                font-size: 0.5rem; /* Reduced font size */
+                top: -10px; /* Adjusted position */
+                padding: 1px 3px; /* Reduced padding */
             }
         }
     </style>
@@ -427,31 +427,27 @@
 <body>
     <div class="container">
         <div class="header-content">
-            <h1 class="font-bold">YouTube Video Player</h1>
-            <a href="https://instagram.com/ign_saif/" target="_blank" class="control-button icon-only">
-                <i class="fab fa-youtube"></i>
-            </a>
+            <h1 class="font-bold">Ads free YouTube Video player</h1>
         </div>
 
-        <!-- Video Input Section -->
-        <div class="video-input-group">
-            <input type="text" id="videoUrlInput" placeholder="Paste YouTube video link here...">
-            <button id="loadVideoBtn" class="control-button">
-                <i class="fas fa-plus"></i>
-                <span>Add Video</span>
+        <!-- YouTube Input Section -->
+        <div class="input-group">
+            <input type="text" id="youtubeUrlInput" placeholder="Paste YouTube video or playlist link here...">
+            <button id="loadYoutubeBtn" class="control-button">
+                <span>Load Video</span>
             </button>
         </div>
 
         <!-- Message Box for alerts -->
         <div id="messageBox" class="message-box"></div>
 
-        <!-- Video Player Wrapper for Overlay Controls -->
+        <!-- Video Player Wrapper -->
         <div class="video-player-wrapper" id="videoPlayerWrapper">
             <!-- This container will hold the dynamically loaded iframe -->
             <div id="player-container"></div>
 
-            <!-- Overlay Controls -->
-            <div class="video-overlay-controls">
+            <!-- Overlay Controls for YouTube -->
+            <div class="video-overlay-controls" id="youtubeOverlayControls">
                 <!-- Video Progress Bar with Time Display -->
                 <div class="progress-bar-wrapper">
                     <div class="progress-bar-container" id="progressBarContainer">
@@ -464,9 +460,17 @@
 
                 <!-- Controls Row -->
                 <div class="flex flex-wrap justify-between items-center gap-4 controls-row">
+                    <!-- Previous Button (YouTube Playlist) -->
+                    <button id="youtubePrevBtn" class="control-button icon-only">
+                        <i class="fas fa-backward"></i>
+                    </button>
                     <!-- Play/Pause Button -->
                     <button id="playPauseBtn" class="control-button icon-only">
                         <i class="fas fa-play" id="playPauseIcon"></i>
+                    </button>
+                     <!-- Next Button (YouTube Playlist) -->
+                     <button id="youtubeNextBtn" class="control-button icon-only">
+                        <i class="fas fa-forward"></i>
                     </button>
 
                     <!-- Volume Control -->
@@ -483,22 +487,15 @@
                     <!-- Speed Control -->
                     <div class="custom-select">
                         <select id="speedSelect">
-                            <option value="0.25">Speed 0.25x</option>
-                            <option value="0.5">Speed 0.5x</option>
-                            <option value="0.75">Speed 0.75x</option>
-                            <option value="1" selected>Speed 1x</option>
-                            <option value="1.25">Speed 1.25x</option>
-                            <option value="1.5">Speed 1.5x</option>
-                            <option value="1.75">Speed 1.75x</option>
-                            <option value="2">Speed 2x</option>
-                            <option value="2.5">Speed 2.5x</option>
-                        </select>
-                    </div>
-
-                    <!-- Quality Control -->
-                    <div class="custom-select">
-                        <select id="qualitySelect" disabled>
-                            <option value="auto">Loading Quality...</option>
+                            <option value="0.25">0.25</option>
+                            <option value="0.5">0.5</option>
+                            <option value="0.75">0.75</option>
+                            <option value="1" selected>1</option>
+                            <option value="1.25">1.25</option>
+                            <option value="1.5">1.5</option>
+                            <option value="1.75">1.75</option>
+                            <option value="2">2</option>
+                            <option value="2.5">2.5</option>
                         </select>
                     </div>
 
@@ -523,12 +520,12 @@
         var firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-        let currentVideoPlayer = null;
-        const defaultYouTubeVideoId = 'Fkk9DI-8el4';
-        let intervalId = null;
-        let overlayHideTimeout; // Timeout for auto-hiding overlay
+        let currentYouTubePlayer = null;
+        const defaultYouTubeVideoId = 'Fkk9DI-8el4'; // Default video to load
+        let youtubeIntervalId = null;
+        let overlayHideTimeout;
 
-        // Get all necessary DOM elements once
+        // YouTube DOM Elements
         const messageBox = document.getElementById('messageBox');
         const progressBar = document.getElementById('progressBar');
         const progressBarContainer = document.getElementById('progressBarContainer');
@@ -540,21 +537,27 @@
         const muteBtn = document.getElementById('muteBtn');
         const volumeIcon = document.getElementById('volumeIcon');
         const speedSelect = document.getElementById('speedSelect');
-        const qualitySelect = document.getElementById('qualitySelect');
         const fullscreenBtn = document.getElementById('fullscreenBtn');
         const fullscreenIcon = document.getElementById('fullscreenIcon');
         const videoPlayerWrapper = document.getElementById('videoPlayerWrapper');
-        const videoUrlInput = document.getElementById('videoUrlInput');
-        const loadVideoBtn = document.getElementById('loadVideoBtn');
-        const videoOverlayControls = document.querySelector('.video-overlay-controls'); // Get the overlay element
+        const youtubeUrlInput = document.getElementById('youtubeUrlInput');
+        const loadYoutubeBtn = document.getElementById('loadYoutubeBtn');
+        const youtubeOverlayControls = document.getElementById('youtubeOverlayControls');
+        const youtubePrevBtn = document.getElementById('youtubePrevBtn');
+        const youtubeNextBtn = document.getElementById('youtubeNextBtn');
 
-        // New elements for volume tooltip
         const volumeTooltip = document.getElementById('volumeTooltip');
         const volumeSliderContainer = document.querySelector('.volume-slider-container');
 
-        let lastVolume = 100; // To store volume before muting
+        let lastYouTubeVolume = 100; // Stores last non-zero volume for mute/unmute
 
-        // Function to display messages to the user
+        // --- Utility Functions ---
+
+        /**
+         * Displays a temporary message box at the top of the player.
+         * @param {string} message - The message to display.
+         * @param {number} duration - How long the message should be visible in milliseconds.
+         */
         function showMessage(message, duration = 3000) {
             messageBox.textContent = message;
             messageBox.classList.add('show');
@@ -563,273 +566,38 @@
             }, duration);
         }
 
-        // Function to extract YouTube video ID from various URL formats
-        function getYouTubeVideoId(url) {
-            const youtubeRegex = /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-            const match = url.match(youtubeRegex);
-            return match && match[1] ? match[1] : null;
-        }
+        /**
+         * Extracts YouTube video ID or playlist ID from a given URL.
+         * @param {string} url - The YouTube URL.
+         * @returns {object|null} An object with type ('video' or 'playlist') and id, or null if no valid ID is found.
+         */
+        function getYouTubeId(url) {
+            // Regex to match video ID (v= or youtu.be/) and optional additional parameters
+            const videoRegex = /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[?&].*)?/;
+            // Regex to match playlist ID (list=)
+            const playlistRegex = /[?&]list=([a-zA-Z0-9_-]+)/;
 
-        // Function to initialize YouTube player
-        function initializeYouTubePlayer(videoId) {
-            document.getElementById('player-container').innerHTML = '<div id="youtube-player-iframe"></div>';
-
-            if (currentVideoPlayer) {
-                currentVideoPlayer.destroy();
+            const playlistMatch = url.match(playlistRegex);
+            if (playlistMatch && playlistMatch[1]) {
+                console.log('Detected YouTube Playlist ID:', playlistMatch[1]);
+                return { type: 'playlist', id: playlistMatch[1] };
             }
 
-            currentVideoPlayer = new YT.Player('youtube-player-iframe', {
-                videoId: videoId,
-                playerVars: {
-                    'controls': 0, // Hide default controls
-                    'rel': 0,      // Do not show related videos
-                    'modestbranding': 1, // Modest branding (hides YouTube logo and info bar)
-                    'enablejsapi': 1, // Enable JS API
-                    'autoplay': 1, // Autoplay the video on load
-                    'iv_load_policy': 3, // Hide video annotations by default
-                    'showinfo': 0, // Hide video title and uploader before the video starts playing
-                    'autohide': 1, // Hide controls after a few seconds of inactivity
-                    'disablekb': 1, // Disable keyboard controls (we'll implement our own)
-                    // Added parameter to reduce ads. Note: Complete ad removal is not possible via API.
-                    'cc_load_policy': 0, // Disable closed captions by default
-                    'fs': 1, // Enable fullscreen button
-                    'origin': window.location.origin // Helps with some API calls and security
-                },
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange,
-                    'onPlaybackQualityChange': onPlaybackQualityChange
-                }
-            });
-            showMessage('Loading YouTube video...');
-        }
-
-        // Called when the YouTube IFrame API is ready
-        function onYouTubeIframeAPIReady() {
-            initializeYouTubePlayer(defaultYouTubeVideoId);
-        }
-
-        // Function to hide overlay automatically after a delay
-        function hideOverlayAutomatically() {
-            clearTimeout(overlayHideTimeout);
-            overlayHideTimeout = setTimeout(() => {
-                videoOverlayControls.classList.remove('active');
-            }, 3000); // Hide after 3 seconds
-        }
-
-        // Function to show overlay and start auto-hide timer
-        function showOverlayAndStartTimer() {
-            videoOverlayControls.classList.add('active');
-            // Only start auto-hide timer if video is playing
-            if (currentVideoPlayer && currentVideoPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
-                hideOverlayAutomatically();
+            const videoMatch = url.match(videoRegex);
+            if (videoMatch && videoMatch[1]) {
+                console.log('Detected YouTube Video ID:', videoMatch[1]);
+                return { type: 'video', id: videoMatch[1] };
             }
-        }
-
-        // Function to clear auto-hide timer (e.g., when user is actively interacting)
-        function keepOverlayVisible() {
-            clearTimeout(overlayHideTimeout);
-            videoOverlayControls.classList.add('active'); // Ensure it's visible
-        }
-
-
-        // Called when the video player is ready.
-        function onPlayerReady(event) {
-            console.log('Player is ready!');
-            volumeSlider.value = currentVideoPlayer.getVolume();
-            updateVolumeIcon(currentVideoPlayer.getVolume());
-            // Add a slight delay to ensure quality levels are populated by the API
-            setTimeout(() => {
-                try {
-                    populateQualityOptions();
-                } catch (e) {
-                    console.error("Error populating quality options:", e);
-                    showMessage('Failed to load video quality options.', 4000);
-                    qualitySelect.innerHTML = '<option value="auto">Failed to load quality</option>';
-                    qualitySelect.disabled = true;
-                }
-            }, 100); // 100ms delay
             
-            updateProgressBarAndTime(); // Initial update for time display
-            // Autoplay the video if it's the default load and not already playing
-            if (event.target.getVideoData().video_id === defaultYouTubeVideoId && event.target.getPlayerState() !== YT.PlayerState.PLAYING) {
-                event.target.playVideo();
-            }
-            showOverlayAndStartTimer(); // Show controls briefly on load
+            console.log('No valid YouTube video or playlist ID detected for URL:', url);
+            return null;
         }
 
-        // Called when the player's state changes.
-        function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.PLAYING || event.data === YT.PlayerState.BUFFERING) {
-                playPauseIcon.classList.remove('fa-play');
-                playPauseIcon.classList.add('fa-pause');
-                if (!intervalId) {
-                    intervalId = setInterval(updateProgressBarAndTime, 100);
-                }
-                hideOverlayAutomatically(); // Start hiding timer when playing
-            } else {
-                playPauseIcon.classList.remove('fa-pause');
-                playPauseIcon.classList.add('fa-play');
-                if (intervalId) {
-                    clearInterval(intervalId);
-                    intervalId = null;
-                }
-                keepOverlayVisible(); // Keep visible when paused/buffering
-            }
-            updateProgressBarAndTime(); // Always update time when state changes
-        }
-
-        // Listen for playback quality changes
-        function onPlaybackQualityChange(event) {
-            console.log('Playback quality changed to:', event.data);
-            if (qualitySelect.value !== event.data) {
-                qualitySelect.value = event.data;
-            }
-        }
-
-        // --- Control Functions ---
-
-        // Play/Pause Toggle
-        playPauseBtn.addEventListener('click', function() {
-            if (currentVideoPlayer) {
-                if (currentVideoPlayer.getPlayerState() === YT.PlayerState.PLAYING || currentVideoPlayer.getPlayerState() === YT.PlayerState.BUFFERING) {
-                    currentVideoPlayer.pauseVideo();
-                } else {
-                    currentVideoPlayer.playVideo();
-                }
-            }
-        });
-
-        // Volume Control
-        volumeSlider.addEventListener('input', function() {
-            if (currentVideoPlayer) {
-                currentVideoPlayer.setVolume(parseInt(this.value));
-                updateVolumeIcon(parseInt(this.value));
-                lastVolume = parseInt(this.value);
-            }
-        });
-
-        muteBtn.addEventListener('click', function() {
-            if (currentVideoPlayer) {
-                if (currentVideoPlayer.isMuted()) {
-                    currentVideoPlayer.unMute();
-                    currentVideoPlayer.setVolume(lastVolume);
-                    volumeSlider.value = lastVolume;
-                    updateVolumeIcon(lastVolume);
-                } else {
-                    lastVolume = currentVideoPlayer.getVolume();
-                    currentVideoPlayer.mute();
-                    volumeSlider.value = 0;
-                    updateVolumeIcon(0);
-                }
-            }
-        });
-
-        function updateVolumeIcon(volume) {
-            volumeIcon.classList.remove('fa-volume-up', 'fa-volume-down', 'fa-volume-off');
-            if (volume === 0 || (currentVideoPlayer && currentVideoPlayer.isMuted())) {
-                volumeIcon.classList.add('fa-volume-off');
-            } else if (volume > 50) {
-                volumeIcon.classList.add('fa-volume-up');
-            } else {
-                volumeIcon.classList.add('fa-volume-down');
-            }
-        }
-
-        // Speed Control
-        speedSelect.addEventListener('change', function() {
-            if (currentVideoPlayer) {
-                const newSpeed = parseFloat(this.value);
-                currentVideoPlayer.setPlaybackRate(newSpeed);
-                if (newSpeed > 2.5 && currentVideoPlayer.getPlaybackRate() <= 2.5) { // Adjusted for 2.5x limit
-                    showMessage('YouTube playback speed is generally limited to 2.5x.', 4000);
-                }
-            } else {
-                showMessage('Video not loaded.', 4000);
-            }
-        });
-
-        // Quality Control
-        function populateQualityOptions() {
-            if (!currentVideoPlayer || typeof currentVideoPlayer.getAvailableQualityLevels !== 'function') {
-                qualitySelect.innerHTML = '<option value="auto">Loading Quality...</option>';
-                qualitySelect.disabled = true;
-                return; // Exit if player not ready
-            }
-
-            const availableQualities = currentVideoPlayer.getAvailableQualityLevels();
-            qualitySelect.innerHTML = ''; // Clear existing options
-
-            if (availableQualities && availableQualities.length > 0) {
-                const preferredOrder = ['hd2160', 'hd1440', 'hd1080', 'hd720', 'large', 'medium', 'small', 'tiny', 'auto'];
-                const addedQualities = new Set();
-
-                // Add preferred qualities first
-                preferredOrder.forEach(dq => {
-                    if (availableQualities.includes(dq) && !addedQualities.has(dq)) {
-                        const option = document.createElement('option');
-                        option.value = dq;
-                        option.textContent = formatQualityText(dq);
-                        qualitySelect.appendChild(option);
-                        addedQualities.add(dq);
-                    }
-                });
-
-                // Add any other available qualities that were not in the preferred list
-                availableQualities.forEach(quality => {
-                    if (!addedQualities.has(quality)) {
-                        const option = document.createElement('option');
-                        option.value = quality;
-                        option.textContent = formatQualityText(quality);
-                        qualitySelect.appendChild(option);
-                        addedQualities.add(quality);
-                    }
-                });
-
-                // After populating all options, try to set the current quality
-                const currentQuality = currentVideoPlayer.getPlaybackQuality();
-                if (availableQualities.includes(currentQuality)) {
-                    qualitySelect.value = currentQuality;
-                } else if (qualitySelect.options.length > 0) {
-                    if (Array.from(qualitySelect.options).some(opt => opt.value === 'auto')) {
-                        qualitySelect.value = 'auto';
-                    } else {
-                        qualitySelect.value = qualitySelect.options[0].value;
-                    }
-                }
-                qualitySelect.disabled = false; // Enable select box
-            } else {
-                // If no qualities are available, disable the select and show a message
-                qualitySelect.innerHTML = '<option value="auto">Auto (Not Available)</option>';
-                qualitySelect.disabled = true;
-            }
-        }
-
-
-        function formatQualityText(quality) {
-            switch (quality) {
-                case 'hd2160': return '4K (2160p)';
-                case 'hd1440': return 'HD (1440p)';
-                case 'hd1080': return 'HD (1080p)';
-                case 'hd720': return 'HD (720p)';
-                case 'large': return 'Large (480p)';
-                case 'medium': return 'Medium (360p)';
-                case 'small': return 'Small (240p)';
-                case 'tiny': return 'Tiny (144p)';
-                case 'auto': return 'Auto';
-                default: return quality.replace('hd', 'HD ').toUpperCase();
-            }
-        }
-
-        qualitySelect.addEventListener('change', function() {
-            if (currentVideoPlayer) {
-                currentVideoPlayer.setPlaybackQuality(this.value);
-            } else {
-                showMessage('Video not loaded.', 4000);
-            }
-        });
-
-        // Video Progress Bar and Time Display
+        /**
+         * Formats seconds into a human-readable time string (MM:SS or HH:MM:SS).
+         * @param {number} seconds - The time in seconds.
+         * @returns {string} Formatted time string.
+         */
         function formatTime(seconds) {
             const hours = Math.floor(seconds / 3600);
             const minutes = Math.floor((seconds % 3600) / 60);
@@ -846,10 +614,183 @@
             return formattedTime;
         }
 
+        /**
+         * Updates the volume icon based on the current volume level.
+         * @param {number} volume - The current volume (0-100).
+         * @param {HTMLElement} iconElement - The Font Awesome icon element.
+         */
+        function updateVolumeIcon(volume, iconElement) {
+            iconElement.classList.remove('fa-volume-up', 'fa-volume-down', 'fa-volume-off');
+            if (volume === 0) {
+                iconElement.classList.add('fa-volume-off');
+            } else if (volume > 50) {
+                iconElement.classList.add('fa-volume-up');
+            } else {
+                iconElement.classList.add('fa-volume-down');
+            }
+        }
+
+        // --- YouTube Player Functions ---
+
+        /**
+         * Initializes or re-initializes the YouTube player with a given video/playlist ID.
+         * @param {object} idInfo - An object containing type ('video' or 'playlist') and id.
+         */
+        function initializeYouTubePlayer(idInfo) {
+            // Clear previous player container content
+            document.getElementById('player-container').innerHTML = '<div id="youtube-player-iframe"></div>';
+
+            // Destroy existing player instance if it exists
+            if (currentYouTubePlayer) {
+                currentYouTubePlayer.destroy();
+                console.log('Destroyed existing YouTube player instance.');
+            }
+
+            currentYouTubePlayer = new YT.Player('youtube-player-iframe', {
+                host: 'https://www.youtube-nocookie.com', // Use no-cookie domain for reduced tracking and branding
+                playerVars: {
+                    'controls': 0,          // Hide YouTube's default controls
+                    'rel': 0,               // Do not show related videos at the end
+                    'modestbranding': 1,    // Modest branding (hides YouTube logo in control bar)
+                    'enablejsapi': 1,       // Enable JS API
+                    'autoplay': 1,          // Autoplay the video on load
+                    'iv_load_policy': 3,    // Hide video annotations by default
+                    'showinfo': 0,          // Hide video title and uploader (deprecated, but still included)
+                    'autohide': 1,          // Hide controls after a few seconds of inactivity
+                    'disablekb': 1,         // Disable keyboard controls (we'll implement our own)
+                    'cc_load_policy': 0,    // Disable closed captions by default
+                    'fs': 1,                // Enable fullscreen button
+                    'origin': window.location.origin, // Helps with some API calls and security
+                    'playsinline': 1        // Ensures video plays inline on iOS
+                },
+                events: {
+                    'onReady': onYouTubePlayerReady,
+                    'onStateChange': onYouTubePlayerStateChange,
+                    'onPlaybackQualityChange': onYouTubePlaybackQualityChange, // Still needed internally for player events
+                    'onError': onYouTubePlayerError // Add error handler for YouTube player
+                }
+            });
+
+            // Store idInfo to be used when the player is ready (onReady event)
+            currentYouTubePlayer._pendingIdInfo = idInfo;
+            showMessage('Loading YouTube content...');
+            youtubeOverlayControls.classList.add('active'); // Ensure controls are visible
+            showOverlayAndStartTimer(); // Start timer for auto-hiding controls
+        }
+
+        /**
+         * Called when the YouTube IFrame API is ready.
+         */
+        function onYouTubeIframeAPIReady() {
+            // Initial load with a default video when the API is ready
+            initializeYouTubePlayer({ type: 'video', id: defaultYouTubeVideoId });
+        }
+
+        /**
+         * Called when the YouTube player is ready to begin playing.
+         * @param {object} event - The event object from the YouTube API.
+         */
+        function onYouTubePlayerReady(event) {
+            console.log('YouTube Player is ready!');
+            const player = event.target;
+            const idInfo = player._pendingIdInfo; // Retrieve stored idInfo
+
+            if (idInfo) {
+                if (idInfo.type === 'video') {
+                    player.loadVideoById(idInfo.id);
+                    console.log('Loading YouTube Video by ID:', idInfo.id);
+                } else if (idInfo.type === 'playlist') {
+                    player.loadPlaylist({
+                        list: idInfo.id,
+                        listType: 'playlist',
+                        index: 0,
+                        startSeconds: 0
+                    });
+                    console.log('Loading YouTube Playlist by ID:', idInfo.id);
+                }
+                player._pendingIdInfo = null; // Clear it after use
+            } else {
+                console.warn('onYouTubePlayerReady fired but no pending ID info found.');
+            }
+
+            // Set initial volume and update icon
+            volumeSlider.value = player.getVolume();
+            updateVolumeIcon(player.getVolume(), volumeIcon);
+            
+            // Update progress bar and time immediately
+            updateProgressBarAndTime();
+            
+            // Player will autoplay if playerVars.autoplay is 1, no need to call playVideo explicitly here unless you want to override
+            showOverlayAndStartTimer();
+        }
+
+        /**
+         * Called when the player's state changes.
+         * @param {object} event - The event object from the YouTube API.
+         */
+        function onYouTubePlayerStateChange(event) {
+            if (event.data === YT.PlayerState.PLAYING || event.data === YT.PlayerState.BUFFERING) {
+                playPauseIcon.classList.remove('fa-play');
+                playPauseIcon.classList.add('fa-pause');
+                if (!youtubeIntervalId) {
+                    youtubeIntervalId = setInterval(updateProgressBarAndTime, 100); // Update progress bar every 100ms
+                }
+                hideOverlayAutomatically(); // Start auto-hide timer
+            } else {
+                playPauseIcon.classList.remove('fa-pause');
+                playPauseIcon.classList.add('fa-play');
+                if (youtubeIntervalId) {
+                    clearInterval(youtubeIntervalId); // Stop updating progress bar
+                    youtubeIntervalId = null;
+                }
+                keepOverlayVisible(); // Keep controls visible when paused/ended
+            }
+            updateProgressBarAndTime(); // Update immediately on state change
+        }
+
+        /**
+         * Called when the video's playback quality changes.
+         * @param {object} event - The event object from the YouTube API.
+         */
+        function onYouTubePlaybackQualityChange(event) {
+            // This function is still useful for logging internal quality changes, even if no UI control exists
+            console.log('YouTube Playback quality changed to:', event.data);
+        }
+
+        /**
+         * Called when an error occurs in the YouTube player.
+         * @param {object} event - The event object from the YouTube API, containing error data.
+         */
+        function onYouTubePlayerError(event) {
+            let errorMessage = "An unknown YouTube player error occurred.";
+            switch (event.data) {
+                case 2:
+                    errorMessage = "The YouTube video ID or playlist ID is invalid or contains characters not allowed.";
+                    break;
+                case 5:
+                    errorMessage = "The requested content cannot be played in an HTML5 player or contains an ad.";
+                    break;
+                case 100:
+                    errorMessage = "The video requested was not found. This occurs when a video has been removed (for any reason) or it has been marked as private.";
+                    break;
+                case 101:
+                case 150:
+                    errorMessage = "The owner of the requested video does not allow it to be played in embedded players.";
+                    break;
+                default:
+                    errorMessage = `YouTube Player Error Code: ${event.data}`;
+            }
+            console.error("YouTube Player Error:", event.data, errorMessage);
+            showMessage(`YouTube Error: ${errorMessage}`, 7000);
+        }
+
+        /**
+         * Updates the progress bar and time display based on current video playback.
+         */
         function updateProgressBarAndTime() {
-            if (currentVideoPlayer && typeof currentVideoPlayer.getCurrentTime === 'function' && typeof currentVideoPlayer.getDuration === 'function') {
-                const currentTime = currentVideoPlayer.getCurrentTime();
-                const duration = currentVideoPlayer.getDuration();
+            if (currentYouTubePlayer && typeof currentYouTubePlayer.getCurrentTime === 'function' && typeof currentYouTubePlayer.getDuration === 'function') {
+                const currentTime = currentYouTubePlayer.getCurrentTime();
+                const duration = currentYouTubePlayer.getDuration();
                 
                 if (duration > 0 && !isNaN(currentTime) && !isNaN(duration)) {
                     const progress = (currentTime / duration) * 100;
@@ -865,27 +806,144 @@
             }
         }
 
-        // Seek functionality when clicking on the progress bar
-        progressBarContainer.addEventListener('click', function(e) {
-            if (currentVideoPlayer && typeof currentVideoPlayer.getDuration === 'function' && currentVideoPlayer.getDuration() > 0) {
-                const rect = this.getBoundingClientRect();
-                const clickX = e.clientX - rect.left;
-                const width = rect.width;
-                const duration = currentVideoPlayer.getDuration();
-                const seekTime = (clickX / width) * duration;
-                currentVideoPlayer.seekTo(seekTime, true);
+        /**
+         * Hides the video overlay controls automatically after a delay.
+         */
+        function hideOverlayAutomatically() {
+            clearTimeout(overlayHideTimeout);
+            overlayHideTimeout = setTimeout(() => {
+                youtubeOverlayControls.classList.remove('active');
+            }, 3000); // Hide after 3 seconds
+        }
+
+        /**
+         * Shows the video overlay controls and starts the auto-hide timer.
+         */
+        function showOverlayAndStartTimer() {
+            youtubeOverlayControls.classList.add('active');
+            // Only start auto-hide timer if video is playing
+            if (currentYouTubePlayer && currentYouTubePlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+                hideOverlayAutomatically();
+            }
+        }
+
+        /**
+         * Clears the auto-hide timer, keeping the overlay controls visible.
+         * Useful when user is actively interacting with controls.
+         */
+        function keepOverlayVisible() {
+            clearTimeout(overlayHideTimeout);
+            youtubeOverlayControls.classList.add('active'); // Ensure it's visible
+        }
+
+        // --- Event Listeners ---
+
+        // Event listener for the "Load Video" button click
+        loadYoutubeBtn.addEventListener('click', function() {
+            const url = youtubeUrlInput.value.trim();
+            if (url) {
+                const idInfo = getYouTubeId(url); // Get video or playlist ID from URL
+                if (idInfo) {
+                    initializeYouTubePlayer(idInfo); // Initialize player with the extracted ID
+                    youtubeUrlInput.value = ''; // Clear the input field after successful load attempt
+                } else {
+                    console.error('Invalid YouTube video or playlist link.', url);
+                    showMessage('Invalid YouTube link. Please provide a valid video or playlist link.', 5000);
+                }
             } else {
-                showMessage('Video not loaded or time not available.', 4000);
+                showMessage('YouTube link is empty. Please paste a link.', 3000);
             }
         });
 
-        // Show time on hover over progress bar
+        // Event listener for Play/Pause button click
+        playPauseBtn.addEventListener('click', function() {
+            if (currentYouTubePlayer) {
+                const playerState = currentYouTubePlayer.getPlayerState();
+                if (playerState === YT.PlayerState.PLAYING || playerState === YT.PlayerState.BUFFERING) {
+                    currentYouTubePlayer.pauseVideo();
+                } else {
+                    currentYouTubePlayer.playVideo();
+                }
+            }
+        });
+
+        // Event listener for Previous video button click (for playlists)
+        youtubePrevBtn.addEventListener('click', function() {
+            if (currentYouTubePlayer) {
+                currentYouTubePlayer.previousVideo();
+                showMessage('Previous YouTube track.');
+            }
+        });
+
+        // Event listener for Next video button click (for playlists)
+        youtubeNextBtn.addEventListener('click', function() {
+            if (currentYouTubePlayer) {
+                currentYouTubePlayer.nextVideo();
+                showMessage('Next YouTube track.');
+            }
+        });
+
+        // Event listener for Volume slider input change
+        volumeSlider.addEventListener('input', function() {
+            if (currentYouTubePlayer) {
+                const newVolume = parseInt(this.value);
+                currentYouTubePlayer.setVolume(newVolume);
+                updateVolumeIcon(newVolume, volumeIcon);
+                lastYouTubeVolume = newVolume; // Store last volume
+            }
+        });
+
+        // Event listener for Mute/Unmute button click
+        muteBtn.addEventListener('click', function() {
+            if (currentYouTubePlayer) {
+                if (currentYouTubePlayer.isMuted()) {
+                    currentYouTubePlayer.unMute();
+                    currentYouTubePlayer.setVolume(lastYouTubeVolume); // Restore last volume
+                    volumeSlider.value = lastYouTubeVolume;
+                    updateVolumeIcon(lastYouTubeVolume, volumeIcon);
+                } else {
+                    lastYouTubeVolume = currentYouTubePlayer.getVolume(); // Save current volume before muting
+                    currentYouTubePlayer.mute();
+                    volumeSlider.value = 0;
+                    updateVolumeIcon(0, volumeIcon);
+                }
+            }
+        });
+
+        // Event listener for Playback Speed select change
+        speedSelect.addEventListener('change', function() {
+            if (currentYouTubePlayer) {
+                const newSpeed = parseFloat(this.value);
+                currentYouTubePlayer.setPlaybackRate(newSpeed);
+                if (newSpeed > 2.5 && currentYouTubePlayer.getPlaybackRate() <= 2.5) {
+                    showMessage('YouTube playback speed is generally limited to 2.5x.', 4000);
+                }
+            } else {
+                showMessage('YouTube video not loaded.', 4000);
+            }
+        });
+
+        // Event listener for clicking on the progress bar to seek
+        progressBarContainer.addEventListener('click', function(e) {
+            if (currentYouTubePlayer && typeof currentYouTubePlayer.getDuration === 'function' && currentYouTubePlayer.getDuration() > 0) {
+                const rect = this.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const width = rect.width;
+                const duration = currentYouTubePlayer.getDuration();
+                const seekTime = (clickX / width) * duration;
+                currentYouTubePlayer.seekTo(seekTime, true); // Seek to the clicked time
+            } else {
+                showMessage('YouTube video not loaded or time not available.', 4000);
+            }
+        });
+
+        // Event listener for mouse movement over the progress bar (for tooltip)
         progressBarContainer.addEventListener('mousemove', function(e) {
-            if (currentVideoPlayer && typeof currentVideoPlayer.getDuration === 'function' && currentVideoPlayer.getDuration() > 0) {
+            if (currentYouTubePlayer && typeof currentYouTubePlayer.getDuration === 'function' && currentYouTubePlayer.getDuration() > 0) {
                 const rect = this.getBoundingClientRect();
                 const mouseX = e.clientX - rect.left;
                 const width = rect.width;
-                const duration = currentVideoPlayer.getDuration();
+                const duration = currentYouTubePlayer.getDuration();
                 const hoverTime = (mouseX / width) * duration;
 
                 progressTooltip.textContent = formatTime(hoverTime);
@@ -895,14 +953,15 @@
             }
         });
 
+        // Event listener for mouse leaving the progress bar (hide tooltip)
         progressBarContainer.addEventListener('mouseleave', function() {
             progressTooltip.style.opacity = '0';
             progressTooltip.style.visibility = 'hidden';
         });
 
-        // Volume tooltip functionality
+        // Event listener for mouse movement over the volume slider (for tooltip)
         volumeSliderContainer.addEventListener('mousemove', function(e) {
-            if (currentVideoPlayer) {
+            if (currentYouTubePlayer) {
                 const rect = this.getBoundingClientRect();
                 const mouseX = e.clientX - rect.left;
                 const sliderWidth = rect.width;
@@ -917,11 +976,11 @@
             }
         });
 
+        // Event listener for mouse leaving the volume slider (hide tooltip)
         volumeSliderContainer.addEventListener('mouseleave', function() {
             volumeTooltip.style.opacity = '0';
             volumeTooltip.style.visibility = 'hidden';
         });
-
 
         // Fullscreen functionality
         fullscreenBtn.addEventListener('click', function() {
@@ -949,7 +1008,7 @@
             }
         });
 
-        // Listen for fullscreen change events to update button text/icon
+        // Update fullscreen icon on fullscreen change
         document.addEventListener('fullscreenchange', () => {
             if (document.fullscreenElement) {
                 fullscreenIcon.classList.remove('fa-expand');
@@ -960,118 +1019,89 @@
             }
         });
 
-
-        // New Video Loading Functionality
-        loadVideoBtn.addEventListener('click', function() {
-            const url = videoUrlInput.value.trim();
-            if (url) {
-                const youtubeId = getYouTubeVideoId(url);
-
-                if (youtubeId) {
-                    initializeYouTubePlayer(youtubeId);
-                    videoUrlInput.value = '';
-                } else {
-                    console.error('Invalid YouTube video link.', url);
-                    showMessage('Invalid YouTube video link. Please provide a valid YouTube link.', 5000);
-                }
-            } else {
-                showMessage('Video link is empty. Please paste a link.', 3000);
-            }
-        });
-
-        // Keyboard controls for skipping
+        // Keyboard controls for skipping and play/pause
         document.addEventListener('keydown', function(event) {
             // Prevent spacebar from scrolling the page
             if (event.key === ' ' && event.target === document.body) {
                 event.preventDefault();
             }
 
-            if (currentVideoPlayer) {
-                const currentTime = currentVideoPlayer.getCurrentTime();
-                const duration = currentVideoPlayer.getDuration();
+            if (currentYouTubePlayer) {
+                const playerState = currentYouTubePlayer.getPlayerState();
+                const currentTime = currentYouTubePlayer.getCurrentTime();
+                const duration = currentYouTubePlayer.getDuration();
                 let newTime;
 
                 switch (event.key) {
-                    case 'ArrowLeft': // Left arrow key
+                    case 'ArrowLeft': // Left arrow key: skip back 5 seconds
                         newTime = Math.max(0, currentTime - 5);
-                        currentVideoPlayer.seekTo(newTime, true);
+                        currentYouTubePlayer.seekTo(newTime, true);
                         showMessage('Skipped 5 seconds back.');
                         break;
-                    case 'ArrowRight': // Right arrow key
+                    case 'ArrowRight': // Right arrow key: skip forward 5 seconds
                         newTime = Math.min(duration, currentTime + 5);
-                        currentVideoPlayer.seekTo(newTime, true);
+                        currentYouTubePlayer.seekTo(newTime, true);
                         showMessage('Skipped 5 seconds forward.');
                         break;
-                    case ' ': // Spacebar for play/pause
-                        if (currentVideoPlayer.getPlayerState() === YT.PlayerState.PLAYING || currentVideoPlayer.getPlayerState() === YT.PlayerState.BUFFERING) {
-                            currentVideoPlayer.pauseVideo();
+                    case ' ': // Spacebar: toggle play/pause
+                        if (playerState === YT.PlayerState.PLAYING || playerState === YT.PlayerState.BUFFERING) {
+                            currentYouTubePlayer.pauseVideo();
                         } else {
-                            currentVideoPlayer.playVideo();
+                            currentYouTubePlayer.playVideo();
                         }
                         break;
                 }
             }
         });
 
-        // --- Overlay Visibility Logic ---
+        // --- Overlay Visibility Logic (Mouse & Touch) ---
 
         // Desktop: Show on mouse enter, hide on mouse leave (if playing)
         videoPlayerWrapper.addEventListener('mouseenter', showOverlayAndStartTimer);
         videoPlayerWrapper.addEventListener('mouseleave', () => {
-            if (currentVideoPlayer && currentVideoPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+            if (currentYouTubePlayer && currentYouTubePlayer.getPlayerState() === YT.PlayerState.PLAYING) {
                 hideOverlayAutomatically();
             } else {
-                // If paused, controls should remain visible until user explicitly hides them or plays
-                clearTimeout(overlayHideTimeout); // Clear any pending hide
+                clearTimeout(overlayHideTimeout);
             }
         });
 
-        // Mobile/Touch: Toggle on click/tap
+        // Mobile/Touch: Toggle on single click/tap
         videoPlayerWrapper.addEventListener('click', function(event) {
             const isTouchDevice = ('ontouchstart' in window || navigator.maxTouchPoints > 0);
-            // Only trigger this logic for touch devices or small screens
             if (isTouchDevice || window.innerWidth < 768) {
-                // Prevent click on controls from toggling the overlay immediately
-                if (event.target.closest('.control-button, .custom-select, .volume-slider, .progress-bar-container, #videoUrlInput, #loadVideoBtn')) {
-                    keepOverlayVisible(); // Keep visible if interacting with controls
+                // If a control button or input is clicked, keep overlay visible
+                if (event.target.closest('.control-button, .custom-select, .volume-slider, .progress-bar-container, .input-group')) {
+                    keepOverlayVisible();
                     return;
                 }
 
-                if (videoOverlayControls.classList.contains('active')) {
-                    // If active, hide it immediately on second tap
-                    videoOverlayControls.classList.remove('active');
+                // Otherwise, toggle overlay visibility
+                if (youtubeOverlayControls.classList.contains('active')) {
+                    youtubeOverlayControls.classList.remove('active');
                     clearTimeout(overlayHideTimeout);
                 } else {
-                    // If not active, show it and start timer
                     showOverlayAndStartTimer();
                 }
             }
         });
 
         // Add listeners to controls to keep overlay visible during interaction
-        const interactiveElements = document.querySelectorAll('.control-button, .custom-select select, .volume-slider, .progress-bar-container');
+        const interactiveElements = document.querySelectorAll('.control-button, .custom-select select, .volume-slider, .progress-bar-container, .input-group input, .input-group button');
         interactiveElements.forEach(element => {
-            // For mouse interaction (desktop)
             element.addEventListener('mouseover', keepOverlayVisible);
             element.addEventListener('mouseout', () => {
-                if (currentVideoPlayer && currentVideoPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+                if (currentYouTubePlayer && currentYouTubePlayer.getPlayerState() === YT.PlayerState.PLAYING) {
                     hideOverlayAutomatically();
                 }
             });
 
-            // For touch interaction (mobile)
             element.addEventListener('touchstart', keepOverlayVisible);
             element.addEventListener('touchend', () => {
-                if (currentVideoPlayer && currentVideoPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+                if (currentYouTubePlayer && currentYouTubePlayer.getPlayerState() === YT.PlayerState.PLAYING) {
                     hideOverlayAutomatically();
                 }
             });
-        });
-
-        // Ensure responsiveness on window resize
-        window.addEventListener('resize', function() {
-            // The aspect-ratio and width:100% in CSS handle most of it.
-            // No specific JS adjustments needed for player size here.
         });
 
     </script>
