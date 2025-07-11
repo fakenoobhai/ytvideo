@@ -675,7 +675,7 @@
             currentYouTubePlayer._pendingIdInfo = idInfo;
             showMessage('Loading YouTube content...');
             youtubeOverlayControls.classList.add('active'); // Ensure controls are visible
-            showOverlayAndStartTimer(); // Start timer for auto-hiding controls
+            // Removed showOverlayAndStartTimer() call here to prevent TypeError
         }
 
         /**
@@ -721,7 +721,7 @@
             updateProgressBarAndTime();
             
             // Player will autoplay if playerVars.autoplay is 1, no need to call playVideo explicitly here unless you want to override
-            showOverlayAndStartTimer();
+            showOverlayAndStartTimer(); // This is the correct place to call it after player is ready
         }
 
         /**
@@ -822,7 +822,7 @@
         function showOverlayAndStartTimer() {
             youtubeOverlayControls.classList.add('active');
             // Only start auto-hide timer if video is playing
-            if (currentYouTubePlayer && currentYouTubePlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+            if (currentYouTubePlayer && typeof currentYouTubePlayer.getPlayerState === 'function' && currentYouTubePlayer.getPlayerState() === YT.PlayerState.PLAYING) {
                 hideOverlayAutomatically();
             }
         }
@@ -1059,7 +1059,7 @@
         // Desktop: Show on mouse enter, hide on mouse leave (if playing)
         videoPlayerWrapper.addEventListener('mouseenter', showOverlayAndStartTimer);
         videoPlayerWrapper.addEventListener('mouseleave', () => {
-            if (currentYouTubePlayer && currentYouTubePlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+            if (currentYouTubePlayer && typeof currentYouTubePlayer.getPlayerState === 'function' && currentYouTubePlayer.getPlayerState() === YT.PlayerState.PLAYING) {
                 hideOverlayAutomatically();
             } else {
                 clearTimeout(overlayHideTimeout);
@@ -1091,14 +1091,14 @@
         interactiveElements.forEach(element => {
             element.addEventListener('mouseover', keepOverlayVisible);
             element.addEventListener('mouseout', () => {
-                if (currentYouTubePlayer && currentYouTubePlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+                if (currentYouTubePlayer && typeof currentYouTubePlayer.getPlayerState === 'function' && currentYouTubePlayer.getPlayerState() === YT.PlayerState.PLAYING) {
                     hideOverlayAutomatically();
                 }
             });
 
             element.addEventListener('touchstart', keepOverlayVisible);
             element.addEventListener('touchend', () => {
-                if (currentYouTubePlayer && currentYouTubePlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+                if (currentYouTubePlayer && typeof currentYouTubePlayer.getPlayerState === 'function' && currentYouTubePlayer.getPlayerState() === YT.PlayerState.PLAYING) {
                     hideOverlayAutomatically();
                 }
             });
