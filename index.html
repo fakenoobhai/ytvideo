@@ -417,7 +417,7 @@
 
         <!-- Video Input Section -->
         <div class="video-input-group">
-            <input type="text" id="videoUrlInput" placeholder="Paste YouTube video link here...">
+            <input type="text" id="videoUrlInput" placeholder="Paste YouTube video or playlist link here...">
             <button id="loadVideoBtn" class="control-button">
                 <i class="fas fa-plus"></i>
                 <span>Add Video</span>
@@ -446,9 +446,17 @@
 
                 <!-- Controls Row -->
                 <div class="flex flex-wrap justify-between items-center gap-4 controls-row">
+                    <!-- Previous Button (YouTube Playlist) -->
+                    <button id="youtubePrevBtn" class="control-button icon-only">
+                        <i class="fas fa-backward"></i>
+                    </button>
                     <!-- Play/Pause Button -->
                     <button id="playPauseBtn" class="control-button icon-only">
                         <i class="fas fa-play" id="playPauseIcon"></i>
+                    </button>
+                     <!-- Next Button (YouTube Playlist) -->
+                     <button id="youtubeNextBtn" class="control-button icon-only">
+                        <i class="fas fa-forward"></i>
                     </button>
 
                     <!-- Volume Control -->
@@ -505,12 +513,12 @@
         var firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-        let currentVideoPlayer = null;
-        const defaultYouTubeVideoId = 'Fkk9DI-8el4';
-        let intervalId = null;
-        let overlayHideTimeout; // Timeout for auto-hiding overlay
+        let currentYouTubePlayer = null;
+        const defaultYouTubeVideoId = 'Fkk9DI-8el4'; // Default video to load
+        let youtubeIntervalId = null;
+        let overlayHideTimeout;
 
-        // Get all necessary DOM elements once
+        // YouTube DOM Elements
         const messageBox = document.getElementById('messageBox');
         const progressBar = document.getElementById('progressBar');
         const progressBarContainer = document.getElementById('progressBarContainer');
@@ -526,17 +534,25 @@
         const fullscreenBtn = document.getElementById('fullscreenBtn');
         const fullscreenIcon = document.getElementById('fullscreenIcon');
         const videoPlayerWrapper = document.getElementById('videoPlayerWrapper');
-        const videoUrlInput = document.getElementById('videoUrlInput');
-        const loadVideoBtn = document.getElementById('loadVideoBtn');
-        const videoOverlayControls = document.querySelector('.video-overlay-controls'); // Get the overlay element
+        const videoUrlInput = document.getElementById('videoUrlInput'); // Changed from youtubeUrlInput
+        const loadVideoBtn = document.getElementById('loadVideoBtn');   // Changed from loadYoutubeBtn
+        const youtubeOverlayControls = document.querySelector('.video-overlay-controls'); // Get the overlay element
 
-        // New elements for volume tooltip
+        const youtubePrevBtn = document.getElementById('youtubePrevBtn'); // Added for playlist navigation
+        const youtubeNextBtn = document.getElementById('youtubeNextBtn'); // Added for playlist navigation
+
         const volumeTooltip = document.getElementById('volumeTooltip');
         const volumeSliderContainer = document.querySelector('.volume-slider-container');
 
-        let lastVolume = 100; // To store volume before muting
+        let lastYouTubeVolume = 100; // Stores last non-zero volume for mute/unmute
 
-        // Function to display messages to the user
+        // --- Utility Functions ---
+
+        /**
+         * Displays a temporary message box at the top of the player.
+         * @param {string} message - The message to display.
+         * @param {number} duration - How long the message should be visible in milliseconds.
+         */
         function showMessage(message, duration = 3000) {
             messageBox.textContent = message;
             messageBox.classList.add('show');
@@ -545,269 +561,38 @@
             }, duration);
         }
 
-        // Function to extract YouTube video ID from various URL formats
-        function getYouTubeVideoId(url) {
-            const youtubeRegex = /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-            const match = url.match(youtubeRegex);
-            return match && match[1] ? match[1] : null;
-        }
+        /**
+         * Extracts YouTube video ID or playlist ID from a given URL.
+         * @param {string} url - The YouTube URL.
+         * @returns {object|null} An object with type ('video' or 'playlist') and id, or null if no valid ID is found.
+         */
+        function getYouTubeId(url) {
+            // Regex to match video ID (v= or youtu.be/) and optional additional parameters
+            const videoRegex = /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[?&].*)?/;
+            // Regex to match playlist ID (list=)
+            const playlistRegex = /[?&]list=([a-zA-Z0-9_-]+)/;
 
-        // Function to initialize YouTube player
-        function initializeYouTubePlayer(videoId) {
-            document.getElementById('player-container').innerHTML = '<div id="youtube-player-iframe"></div>';
-
-            if (currentVideoPlayer) {
-                currentVideoPlayer.destroy();
+            const playlistMatch = url.match(playlistRegex);
+            if (playlistMatch && playlistMatch[1]) {
+                console.log('Detected YouTube Playlist ID:', playlistMatch[1]);
+                return { type: 'playlist', id: playlistMatch[1] };
             }
 
-            currentVideoPlayer = new YT.Player('youtube-player-iframe', {
-                videoId: videoId,
-                playerVars: {
-                    'controls': 0, // Hide default controls
-                    'rel': 0,      // Do not show related videos
-                    'modestbranding': 1, // Modest branding (hides YouTube logo and info bar)
-                    'enablejsapi': 1, // Enable JS API
-                    'autoplay': 1, // Autoplay the video on load
-                    'iv_load_policy': 3, // Hide video annotations by default
-                    'showinfo': 0, // Hide video title and uploader before the video starts playing
-                    'autohide': 1, // Hide controls after a few seconds of inactivity
-                    'disablekb': 1 // Disable keyboard controls (we'll implement our own)
-                },
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange,
-                    'onPlaybackQualityChange': onPlaybackQualityChange
-                }
-            });
-            showMessage('Loading YouTube video...');
-        }
-
-        // Called when the YouTube IFrame API is ready
-        function onYouTubeIframeAPIReady() {
-            initializeYouTubePlayer(defaultYouTubeVideoId);
-        }
-
-        // Function to hide overlay automatically after a delay
-        function hideOverlayAutomatically() {
-            clearTimeout(overlayHideTimeout);
-            overlayHideTimeout = setTimeout(() => {
-                videoOverlayControls.classList.remove('active');
-            }, 3000); // Hide after 3 seconds
-        }
-
-        // Function to show overlay and start auto-hide timer
-        function showOverlayAndStartTimer() {
-            videoOverlayControls.classList.add('active');
-            // Only start auto-hide timer if video is playing
-            if (currentVideoPlayer && currentVideoPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
-                hideOverlayAutomatically();
+            const videoMatch = url.match(videoRegex);
+            if (videoMatch && videoMatch[1]) {
+                console.log('Detected YouTube Video ID:', videoMatch[1]);
+                return { type: 'video', id: videoMatch[1] };
             }
-        }
-
-        // Function to clear auto-hide timer (e.g., when user is actively interacting)
-        function keepOverlayVisible() {
-            clearTimeout(overlayHideTimeout);
-            videoOverlayControls.classList.add('active'); // Ensure it's visible
-        }
-
-
-        // Called when the video player is ready.
-        function onPlayerReady(event) {
-            console.log('Player is ready!');
-            volumeSlider.value = currentVideoPlayer.getVolume();
-            updateVolumeIcon(currentVideoPlayer.getVolume());
-            // Add a slight delay to ensure quality levels are populated by the API
-            setTimeout(() => {
-                try {
-                    populateQualityOptions();
-                } catch (e) {
-                    console.error("Error populating quality options:", e);
-                    showMessage('Failed to load video quality options.', 4000);
-                    qualitySelect.innerHTML = '<option value="auto">Failed to load quality</option>';
-                    qualitySelect.disabled = true;
-                }
-            }, 100); // 100ms delay
             
-            updateProgressBarAndTime(); // Initial update for time display
-            // Autoplay the video if it's the default load and not already playing
-            if (event.target.getVideoData().video_id === defaultYouTubeVideoId && event.target.getPlayerState() !== YT.PlayerState.PLAYING) {
-                event.target.playVideo();
-            }
-            showOverlayAndStartTimer(); // Show controls briefly on load
+            console.log('No valid YouTube video or playlist ID detected for URL:', url);
+            return null;
         }
 
-        // Called when the player's state changes.
-        function onPlayerStateChange(event) {
-            if (event.data === YT.PlayerState.PLAYING || event.data === YT.PlayerState.BUFFERING) {
-                playPauseIcon.classList.remove('fa-play');
-                playPauseIcon.classList.add('fa-pause');
-                if (!intervalId) {
-                    intervalId = setInterval(updateProgressBarAndTime, 100);
-                }
-                hideOverlayAutomatically(); // Start hiding timer when playing
-            } else {
-                playPauseIcon.classList.remove('fa-pause');
-                playPauseIcon.classList.add('fa-play');
-                if (intervalId) {
-                    clearInterval(intervalId);
-                    intervalId = null;
-                }
-                keepOverlayVisible(); // Keep visible when paused/buffering
-            }
-            updateProgressBarAndTime(); // Always update time when state changes
-        }
-
-        // Listen for playback quality changes
-        function onPlaybackQualityChange(event) {
-            console.log('Playback quality changed to:', event.data);
-            if (qualitySelect.value !== event.data) {
-                qualitySelect.value = event.data;
-            }
-        }
-
-        // --- Control Functions ---
-
-        // Play/Pause Toggle
-        playPauseBtn.addEventListener('click', function() {
-            if (currentVideoPlayer) {
-                if (currentVideoPlayer.getPlayerState() === YT.PlayerState.PLAYING || currentVideoPlayer.getPlayerState() === YT.PlayerState.BUFFERING) {
-                    currentVideoPlayer.pauseVideo();
-                } else {
-                    currentVideoPlayer.playVideo();
-                }
-            }
-        });
-
-        // Volume Control
-        volumeSlider.addEventListener('input', function() {
-            if (currentVideoPlayer) {
-                currentVideoPlayer.setVolume(parseInt(this.value));
-                updateVolumeIcon(parseInt(this.value));
-                lastVolume = parseInt(this.value);
-            }
-        });
-
-        muteBtn.addEventListener('click', function() {
-            if (currentVideoPlayer) {
-                if (currentVideoPlayer.isMuted()) {
-                    currentVideoPlayer.unMute();
-                    currentVideoPlayer.setVolume(lastVolume);
-                    volumeSlider.value = lastVolume;
-                    updateVolumeIcon(lastVolume);
-                } else {
-                    lastVolume = currentVideoPlayer.getVolume();
-                    currentVideoPlayer.mute();
-                    volumeSlider.value = 0;
-                    updateVolumeIcon(0);
-                }
-            }
-        });
-
-        function updateVolumeIcon(volume) {
-            volumeIcon.classList.remove('fa-volume-up', 'fa-volume-down', 'fa-volume-off');
-            if (volume === 0 || (currentVideoPlayer && currentVideoPlayer.isMuted())) {
-                volumeIcon.classList.add('fa-volume-off');
-            } else if (volume > 50) {
-                volumeIcon.classList.add('fa-volume-up');
-            } else {
-                volumeIcon.classList.add('fa-volume-down');
-            }
-        }
-
-        // Speed Control
-        speedSelect.addEventListener('change', function() {
-            if (currentVideoPlayer) {
-                const newSpeed = parseFloat(this.value);
-                currentVideoPlayer.setPlaybackRate(newSpeed);
-                if (newSpeed > 2.5 && currentVideoPlayer.getPlaybackRate() <= 2.5) { // Adjusted for 2.5x limit
-                    showMessage('YouTube playback speed is generally limited to 2.5x.', 4000);
-                }
-            } else {
-                showMessage('Video not loaded.', 4000);
-            }
-        });
-
-        // Quality Control
-        function populateQualityOptions() {
-            if (!currentVideoPlayer || typeof currentVideoPlayer.getAvailableQualityLevels !== 'function') {
-                qualitySelect.innerHTML = '<option value="auto">Loading Quality...</option>';
-                qualitySelect.disabled = true;
-                return; // Exit if player not ready
-            }
-
-            const availableQualities = currentVideoPlayer.getAvailableQualityLevels();
-            qualitySelect.innerHTML = ''; // Clear existing options
-
-            if (availableQualities && availableQualities.length > 0) {
-                const preferredOrder = ['hd2160', 'hd1440', 'hd1080', 'hd720', 'large', 'medium', 'small', 'tiny', 'auto'];
-                const addedQualities = new Set();
-
-                // Add preferred qualities first
-                preferredOrder.forEach(dq => {
-                    if (availableQualities.includes(dq) && !addedQualities.has(dq)) {
-                        const option = document.createElement('option');
-                        option.value = dq;
-                        option.textContent = formatQualityText(dq);
-                        qualitySelect.appendChild(option);
-                        addedQualities.add(dq);
-                    }
-                });
-
-                // Add any other available qualities that were not in the preferred list
-                availableQualities.forEach(quality => {
-                    if (!addedQualities.has(quality)) {
-                        const option = document.createElement('option');
-                        option.value = quality;
-                        option.textContent = formatQualityText(quality);
-                        qualitySelect.appendChild(option);
-                        addedQualities.add(quality);
-                    }
-                });
-
-                // After populating all options, try to set the current quality
-                const currentQuality = currentVideoPlayer.getPlaybackQuality();
-                if (availableQualities.includes(currentQuality)) {
-                    qualitySelect.value = currentQuality;
-                } else if (qualitySelect.options.length > 0) {
-                    if (Array.from(qualitySelect.options).some(opt => opt.value === 'auto')) {
-                        qualitySelect.value = 'auto';
-                    } else {
-                        qualitySelect.value = qualitySelect.options[0].value;
-                    }
-                }
-                qualitySelect.disabled = false; // Enable select box
-            } else {
-                // If no qualities are available, disable the select and show a message
-                qualitySelect.innerHTML = '<option value="auto">Auto (Not Available)</option>';
-                qualitySelect.disabled = true;
-            }
-        }
-
-
-        function formatQualityText(quality) {
-            switch (quality) {
-                case 'hd2160': return '4K (2160p)';
-                case 'hd1440': return 'HD (1440p)';
-                case 'hd1080': return 'HD (1080p)';
-                case 'hd720': return 'HD (720p)';
-                case 'large': return 'Large (480p)';
-                case 'medium': return 'Medium (360p)';
-                case 'small': return 'Small (240p)';
-                case 'tiny': return 'Tiny (144p)';
-                case 'auto': return 'Auto';
-                default: return quality.replace('hd', 'HD ').toUpperCase();
-            }
-        }
-
-        qualitySelect.addEventListener('change', function() {
-            if (currentVideoPlayer) {
-                currentVideoPlayer.setPlaybackQuality(this.value);
-            } else {
-                showMessage('Video not loaded.', 4000);
-            }
-        });
-
-        // Video Progress Bar and Time Display
+        /**
+         * Formats seconds into a human-readable time string (MM:SS or HH:MM:SS).
+         * @param {number} seconds - The time in seconds.
+         * @returns {string} Formatted time string.
+         */
         function formatTime(seconds) {
             const hours = Math.floor(seconds / 3600);
             const minutes = Math.floor((seconds % 3600) / 60);
@@ -824,10 +609,187 @@
             return formattedTime;
         }
 
+        /**
+         * Updates the volume icon based on the current volume level.
+         * @param {number} volume - The current volume (0-100).
+         * @param {HTMLElement} iconElement - The Font Awesome icon element.
+         */
+        function updateVolumeIcon(volume, iconElement) {
+            iconElement.classList.remove('fa-volume-up', 'fa-volume-down', 'fa-volume-off');
+            if (volume === 0) {
+                iconElement.classList.add('fa-volume-off');
+            } else if (volume > 50) {
+                iconElement.classList.add('fa-volume-up');
+            } else {
+                iconElement.classList.add('fa-volume-down');
+            }
+        }
+
+        // --- YouTube Player Functions ---
+
+        /**
+         * Initializes or re-initializes the YouTube player with a given video/playlist ID.
+         * @param {object} idInfo - An object containing type ('video' or 'playlist') and id.
+         */
+        function initializeYouTubePlayer(idInfo) {
+            // Clear previous player container content
+            document.getElementById('player-container').innerHTML = '<div id="youtube-player-iframe"></div>';
+
+            // Destroy existing player instance if it exists
+            if (currentYouTubePlayer) {
+                currentYouTubePlayer.destroy();
+                console.log('Destroyed existing YouTube player instance.');
+            }
+
+            currentYouTubePlayer = new YT.Player('youtube-player-iframe', {
+                // No videoId or list property here, they will be loaded in onPlayerReady
+                playerVars: {
+                    'controls': 0,          // Hide YouTube's default controls
+                    'rel': 0,               // Do not show related videos at the end
+                    'modestbranding': 1,    // Modest branding (hides YouTube logo in control bar)
+                    'enablejsapi': 1,       // Enable JS API
+                    'autoplay': 1,          // Autoplay the video on load
+                    'iv_load_policy': 3,    // Hide video annotations by default
+                    'showinfo': 0,          // Hide video title and uploader (deprecated, but still included)
+                    'autohide': 1,          // Hide controls after a few seconds of inactivity
+                    'disablekb': 1,         // Disable keyboard controls (we'll implement our own)
+                    'cc_load_policy': 0,    // Disable closed captions by default
+                    'fs': 1,                // Enable fullscreen button
+                    'origin': window.location.origin, // Helps with some API calls and security
+                    'playsinline': 1        // Ensures video plays inline on iOS
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange,
+                    'onPlaybackQualityChange': onPlaybackQualityChange,
+                    'onError': onYouTubePlayerError // Add error handler for YouTube player
+                }
+            });
+
+            // Store idInfo to be used when the player is ready (onReady event)
+            currentYouTubePlayer._pendingIdInfo = idInfo;
+            showMessage('Loading YouTube content...');
+            youtubeOverlayControls.classList.add('active'); // Ensure controls are visible
+        }
+
+        /**
+         * Called when the YouTube IFrame API is ready.
+         */
+        function onYouTubeIframeAPIReady() {
+            // Initial load with a default video when the API is ready
+            initializeYouTubePlayer({ type: 'video', id: defaultYouTubeVideoId });
+        }
+
+        /**
+         * Called when the YouTube player is ready to begin playing.
+         * @param {object} event - The event object from the YouTube API.
+         */
+        function onPlayerReady(event) {
+            console.log('Player is ready!');
+            const player = event.target;
+            const idInfo = player._pendingIdInfo; // Retrieve stored idInfo
+
+            if (idInfo) {
+                if (idInfo.type === 'video') {
+                    player.loadVideoById(idInfo.id);
+                    console.log('Loading YouTube Video by ID:', idInfo.id);
+                } else if (idInfo.type === 'playlist') {
+                    player.loadPlaylist({
+                        list: idInfo.id,
+                        listType: 'playlist',
+                        index: 0, // Start from the first video in the playlist
+                        startSeconds: 0
+                    });
+                    console.log('Loading YouTube Playlist by ID:', idInfo.id);
+                }
+                player._pendingIdInfo = null; // Clear it after use
+            } else {
+                console.warn('onPlayerReady fired but no pending ID info found.');
+            }
+
+            // Set initial volume and update icon
+            volumeSlider.value = player.getVolume();
+            updateVolumeIcon(player.getVolume(), volumeIcon);
+            
+            // Update progress bar and time immediately
+            updateProgressBarAndTime();
+            
+            // Player will autoplay if playerVars.autoplay is 1, no need to call playVideo explicitly here unless you want to override
+            showOverlayAndStartTimer(); // This is the correct place to call it after player is ready
+            populateQualityOptions(); // Populate quality options when player is ready
+        }
+
+        /**
+         * Called when the player's state changes.
+         * @param {object} event - The event object from the YouTube API.
+         */
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.PLAYING || event.data === YT.PlayerState.BUFFERING) {
+                playPauseIcon.classList.remove('fa-play');
+                playPauseIcon.classList.add('fa-pause');
+                if (!youtubeIntervalId) {
+                    youtubeIntervalId = setInterval(updateProgressBarAndTime, 100); // Update progress bar every 100ms
+                }
+                hideOverlayAutomatically(); // Start auto-hide timer
+                populateQualityOptions(); // Re-populate quality options when playback starts (e.g., new video in playlist)
+            } else {
+                playPauseIcon.classList.remove('fa-pause');
+                playPauseIcon.classList.add('fa-play');
+                if (youtubeIntervalId) {
+                    clearInterval(youtubeIntervalId); // Stop updating progress bar
+                    youtubeIntervalId = null;
+                }
+                keepOverlayVisible(); // Keep controls visible when paused/ended
+            }
+            updateProgressBarAndTime(); // Update immediately on state change
+        }
+
+        /**
+         * Called when the video's playback quality changes.
+         * @param {object} event - The event object from the YouTube API.
+         */
+        function onPlaybackQualityChange(event) {
+            // This function is still useful for logging internal quality changes, even if no UI control exists
+            console.log('YouTube Playback quality changed to:', event.data);
+            if (qualitySelect.value !== event.data) {
+                qualitySelect.value = event.data;
+            }
+        }
+
+        /**
+         * Called when an error occurs in the YouTube player.
+         * @param {object} event - The event object from the YouTube API, containing error data.
+         */
+        function onYouTubePlayerError(event) {
+            let errorMessage = "An unknown YouTube player error occurred.";
+            switch (event.data) {
+                case 2:
+                    errorMessage = "The YouTube video ID or playlist ID is invalid or contains characters not allowed.";
+                    break;
+                case 5:
+                    errorMessage = "The requested content cannot be played in an HTML5 player or contains an ad.";
+                    break;
+                case 100:
+                    errorMessage = "The video requested was not found. This occurs when a video has been removed (for any reason) or it has been marked as private.";
+                    break;
+                case 101:
+                case 150:
+                    errorMessage = "The owner of the requested video does not allow it to be played in embedded players.";
+                    break;
+                default:
+                    errorMessage = `YouTube Player Error Code: ${event.data}`;
+            }
+            console.error("YouTube Player Error:", event.data, errorMessage);
+            showMessage(`YouTube Error: ${errorMessage}`, 7000);
+        }
+
+        /**
+         * Updates the progress bar and time display based on current video playback.
+         */
         function updateProgressBarAndTime() {
-            if (currentVideoPlayer && typeof currentVideoPlayer.getCurrentTime === 'function' && typeof currentVideoPlayer.getDuration === 'function') {
-                const currentTime = currentVideoPlayer.getCurrentTime();
-                const duration = currentVideoPlayer.getDuration();
+            if (currentYouTubePlayer && typeof currentYouTubePlayer.getCurrentTime === 'function' && typeof currentYouTubePlayer.getDuration === 'function') {
+                const currentTime = currentYouTubePlayer.getCurrentTime();
+                const duration = currentYouTubePlayer.getDuration();
                 
                 if (duration > 0 && !isNaN(currentTime) && !isNaN(duration)) {
                     const progress = (currentTime / duration) * 100;
@@ -843,27 +805,245 @@
             }
         }
 
-        // Seek functionality when clicking on the progress bar
-        progressBarContainer.addEventListener('click', function(e) {
-            if (currentVideoPlayer && typeof currentVideoPlayer.getDuration === 'function' && currentVideoPlayer.getDuration() > 0) {
-                const rect = this.getBoundingClientRect();
-                const clickX = e.clientX - rect.left;
-                const width = rect.width;
-                const duration = currentVideoPlayer.getDuration();
-                const seekTime = (clickX / width) * duration;
-                currentVideoPlayer.seekTo(seekTime, true);
+        /**
+         * Hides the video overlay controls automatically after a delay.
+         */
+        function hideOverlayAutomatically() {
+            clearTimeout(overlayHideTimeout);
+            overlayHideTimeout = setTimeout(() => {
+                youtubeOverlayControls.classList.remove('active');
+            }, 3000); // Hide after 3 seconds
+        }
+
+        /**
+         * Shows the video overlay controls and starts the auto-hide timer.
+         */
+        function showOverlayAndStartTimer() {
+            youtubeOverlayControls.classList.add('active');
+            // Only start auto-hide timer if video is playing
+            if (currentYouTubePlayer && typeof currentYouTubePlayer.getPlayerState === 'function' && currentYouTubePlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+                hideOverlayAutomatically();
+            }
+        }
+
+        /**
+         * Clears the auto-hide timer, keeping the overlay controls visible.
+         * Useful when user is actively interacting with controls.
+         */
+        function keepOverlayVisible() {
+            clearTimeout(overlayHideTimeout);
+            youtubeOverlayControls.classList.add('active'); // Ensure it's visible
+        }
+
+        /**
+         * Populates the quality select dropdown with available quality levels.
+         */
+        function populateQualityOptions() {
+            console.log('Attempting to populate quality options...');
+            if (!currentYouTubePlayer || typeof currentYouTubePlayer.getAvailableQualityLevels !== 'function') {
+                console.warn('YouTube player not ready or getAvailableQualityLevels not available.');
+                qualitySelect.innerHTML = '<option value="auto">Loading Quality...</option>';
+                qualitySelect.disabled = true; // Disable if player not ready or method not available
+                return;
+            }
+
+            const availableQualities = currentYouTubePlayer.getAvailableQualityLevels();
+            console.log('Available qualities from YouTube API:', availableQualities);
+            qualitySelect.innerHTML = ''; // Clear existing options
+
+            if (availableQualities && availableQualities.length > 0) {
+                // Define a preferred order for quality options
+                const preferredOrder = ['hd2160', 'hd1440', 'hd1080', 'hd720', 'large', 'medium', 'small', 'tiny', 'auto'];
+                const addedQualities = new Set();
+
+                // Add qualities in preferred order first
+                preferredOrder.forEach(dq => {
+                    if (availableQualities.includes(dq) && !addedQualities.has(dq)) {
+                        const option = document.createElement('option');
+                        option.value = dq;
+                        option.textContent = formatQualityText(dq);
+                        qualitySelect.appendChild(option);
+                        addedQualities.add(dq);
+                    }
+                });
+
+                // Add any remaining qualities not in the preferred order
+                availableQualities.forEach(quality => {
+                    if (!addedQualities.has(quality)) {
+                        const option = document.createElement('option');
+                        option.value = quality;
+                        option.textContent = formatQualityText(quality);
+                        qualitySelect.appendChild(option);
+                        addedQualities.add(quality);
+                    }
+                });
+
+                // Set the current quality as selected
+                const currentQuality = currentYouTubePlayer.getPlaybackQuality();
+                console.log('Current playback quality:', currentQuality);
+                if (availableQualities.includes(currentQuality)) {
+                    qualitySelect.value = currentQuality;
+                } else if (qualitySelect.options.length > 0) {
+                    // Fallback to 'auto' if available, otherwise first option
+                    if (Array.from(qualitySelect.options).some(opt => opt.value === 'auto')) {
+                        qualitySelect.value = 'auto';
+                    } else {
+                        qualitySelect.value = qualitySelect.options[0].value;
+                    }
+                }
+                qualitySelect.disabled = false; // Enable the select dropdown if qualities are available
+                console.log('Quality options populated and enabled.');
             } else {
-                showMessage('Video not loaded or time not available.', 4000);
+                qualitySelect.innerHTML = '<option value="auto">Auto (Not Available)</option>';
+                qualitySelect.disabled = true; // Keep disabled if no qualities are available
+                console.log('No available quality levels found. Quality select disabled.');
+            }
+        }
+
+        /**
+         * Formats YouTube quality level strings into more readable text.
+         * @param {string} quality - The raw quality string from YouTube API.
+         * @returns {string} Formatted quality text.
+         */
+        function formatQualityText(quality) {
+            switch (quality) {
+                case 'hd2160': return '4K (2160p)';
+                case 'hd1440': return 'HD (1440p)';
+                case 'hd1080': return 'HD (1080p)';
+                case 'hd720': return 'HD (720p)';
+                case 'large': return 'Large (480p)';
+                case 'medium': return 'Medium (360p)';
+                case 'small': return 'Small (240p)';
+                case 'tiny': return 'Tiny (144p)';
+                case 'auto': return 'Auto';
+                default: return quality.replace('hd', 'HD ').toUpperCase();
+            }
+        }
+
+
+        // --- Event Listeners ---
+
+        // Event listener for the "Load Video" button click
+        loadVideoBtn.addEventListener('click', function() {
+            const url = videoUrlInput.value.trim();
+            if (url) {
+                const idInfo = getYouTubeId(url); // Use the new function
+
+                if (idInfo) {
+                    initializeYouTubePlayer(idInfo); // Pass the idInfo object
+                    videoUrlInput.value = '';
+                } else {
+                    console.error('Invalid YouTube video or playlist link.', url);
+                    showMessage('Invalid YouTube link. Please provide a valid video or playlist link.', 5000);
+                }
+            } else {
+                showMessage('Video link is empty. Please paste a link.', 3000);
             }
         });
 
-        // Show time on hover over progress bar
+        // Event listener for Play/Pause button click
+        playPauseBtn.addEventListener('click', function() {
+            if (currentYouTubePlayer) {
+                const playerState = currentYouTubePlayer.getPlayerState();
+                if (playerState === YT.PlayerState.PLAYING || playerState === YT.PlayerState.BUFFERING) {
+                    currentYouTubePlayer.pauseVideo();
+                } else {
+                    currentYouTubePlayer.playVideo();
+                }
+            }
+        });
+
+        // Event listener for Previous video button click (for playlists)
+        youtubePrevBtn.addEventListener('click', function() {
+            if (currentYouTubePlayer && typeof currentYouTubePlayer.previousVideo === 'function') {
+                currentYouTubePlayer.previousVideo();
+                showMessage('Previous YouTube track.');
+            } else {
+                showMessage('No playlist loaded or previous track not available.', 3000);
+            }
+        });
+
+        // Event listener for Next video button click (for playlists)
+        youtubeNextBtn.addEventListener('click', function() {
+            if (currentYouTubePlayer && typeof currentYouTubePlayer.nextVideo === 'function') {
+                currentYouTubePlayer.nextVideo();
+                showMessage('Next YouTube track.');
+            } else {
+                showMessage('No playlist loaded or next track not available.', 3000);
+            }
+        });
+
+        // Event listener for Volume slider input change
+        volumeSlider.addEventListener('input', function() {
+            if (currentYouTubePlayer) {
+                const newVolume = parseInt(this.value);
+                currentYouTubePlayer.setVolume(newVolume);
+                updateVolumeIcon(newVolume, volumeIcon);
+                lastYouTubeVolume = newVolume; // Store last volume
+            }
+        });
+
+        // Event listener for Mute/Unmute button click
+        muteBtn.addEventListener('click', function() {
+            if (currentYouTubePlayer) {
+                if (currentYouTubePlayer.isMuted()) {
+                    currentYouTubePlayer.unMute();
+                    currentYouTubePlayer.setVolume(lastYouTubeVolume); // Restore last volume
+                    volumeSlider.value = lastYouTubeVolume;
+                    updateVolumeIcon(lastYouTubeVolume, volumeIcon);
+                } else {
+                    lastYouTubeVolume = currentYouTubePlayer.getVolume(); // Save current volume before muting
+                    currentYouTubePlayer.mute();
+                    volumeSlider.value = 0;
+                    updateVolumeIcon(0, volumeIcon);
+                }
+            }
+        });
+
+        // Event listener for Playback Speed select change
+        speedSelect.addEventListener('change', function() {
+            if (currentYouTubePlayer) {
+                const newSpeed = parseFloat(this.value);
+                currentYouTubePlayer.setPlaybackRate(newSpeed);
+                if (newSpeed > 2.5 && currentYouTubePlayer.getPlaybackRate() <= 2.5) {
+                    showMessage('YouTube playback speed is generally limited to 2.5x.', 4000);
+                }
+            } else {
+                showMessage('YouTube video not loaded.', 4000);
+            }
+        });
+
+        // Event listener for Quality select change
+        qualitySelect.addEventListener('change', function() {
+            if (currentYouTubePlayer) {
+                currentYouTubePlayer.setPlaybackQuality(this.value);
+            } else {
+                showMessage('YouTube video not loaded.', 4000);
+            }
+        });
+
+
+        // Event listener for clicking on the progress bar to seek
+        progressBarContainer.addEventListener('click', function(e) {
+            if (currentYouTubePlayer && typeof currentYouTubePlayer.getDuration === 'function' && currentYouTubePlayer.getDuration() > 0) {
+                const rect = this.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const width = rect.width;
+                const duration = currentYouTubePlayer.getDuration();
+                const seekTime = (clickX / width) * duration;
+                currentYouTubePlayer.seekTo(seekTime, true); // Seek to the clicked time
+            } else {
+                showMessage('YouTube video not loaded or time not available.', 4000);
+            }
+        });
+
+        // Event listener for mouse movement over the progress bar (for tooltip)
         progressBarContainer.addEventListener('mousemove', function(e) {
-            if (currentVideoPlayer && typeof currentVideoPlayer.getDuration === 'function' && currentVideoPlayer.getDuration() > 0) {
+            if (currentYouTubePlayer && typeof currentYouTubePlayer.getDuration === 'function' && currentYouTubePlayer.getDuration() > 0) {
                 const rect = this.getBoundingClientRect();
                 const mouseX = e.clientX - rect.left;
                 const width = rect.width;
-                const duration = currentVideoPlayer.getDuration();
+                const duration = currentYouTubePlayer.getDuration();
                 const hoverTime = (mouseX / width) * duration;
 
                 progressTooltip.textContent = formatTime(hoverTime);
@@ -873,14 +1053,15 @@
             }
         });
 
+        // Event listener for mouse leaving the progress bar (hide tooltip)
         progressBarContainer.addEventListener('mouseleave', function() {
             progressTooltip.style.opacity = '0';
             progressTooltip.style.visibility = 'hidden';
         });
 
-        // Volume tooltip functionality
+        // Event listener for mouse movement over the volume slider (for tooltip)
         volumeSliderContainer.addEventListener('mousemove', function(e) {
-            if (currentVideoPlayer) {
+            if (currentYouTubePlayer) {
                 const rect = this.getBoundingClientRect();
                 const mouseX = e.clientX - rect.left;
                 const sliderWidth = rect.width;
@@ -895,11 +1076,11 @@
             }
         });
 
+        // Event listener for mouse leaving the volume slider (hide tooltip)
         volumeSliderContainer.addEventListener('mouseleave', function() {
             volumeTooltip.style.opacity = '0';
             volumeTooltip.style.visibility = 'hidden';
         });
-
 
         // Fullscreen functionality
         fullscreenBtn.addEventListener('click', function() {
@@ -927,7 +1108,7 @@
             }
         });
 
-        // Listen for fullscreen change events to update button text/icon
+        // Update fullscreen icon on fullscreen change
         document.addEventListener('fullscreenchange', () => {
             if (document.fullscreenElement) {
                 fullscreenIcon.classList.remove('fa-expand');
@@ -938,114 +1119,89 @@
             }
         });
 
-
-        // New Video Loading Functionality
-        loadVideoBtn.addEventListener('click', function() {
-            const url = videoUrlInput.value.trim();
-            if (url) {
-                const youtubeId = getYouTubeVideoId(url);
-
-                if (youtubeId) {
-                    initializeYouTubePlayer(youtubeId);
-                    videoUrlInput.value = '';
-                } else {
-                    console.error('Invalid YouTube video link.', url);
-                    showMessage('Invalid YouTube video link. Please provide a valid YouTube link.', 5000);
-                }
-            } else {
-                showMessage('Video link is empty. Please paste a link.', 3000);
-            }
-        });
-
-        // Keyboard controls for skipping
+        // Keyboard controls for skipping and play/pause
         document.addEventListener('keydown', function(event) {
-            if (currentVideoPlayer) {
-                const currentTime = currentVideoPlayer.getCurrentTime();
-                const duration = currentVideoPlayer.getDuration();
+            // Prevent spacebar from scrolling the page
+            if (event.key === ' ' && event.target === document.body) {
+                event.preventDefault();
+            }
+
+            if (currentYouTubePlayer) {
+                const playerState = currentYouTubePlayer.getPlayerState();
+                const currentTime = currentYouTubePlayer.getCurrentTime();
+                const duration = currentYouTubePlayer.getDuration();
                 let newTime;
 
                 switch (event.key) {
-                    case 'ArrowLeft': // Left arrow key
+                    case 'ArrowLeft': // Left arrow key: skip back 5 seconds
                         newTime = Math.max(0, currentTime - 5);
-                        currentVideoPlayer.seekTo(newTime, true);
+                        currentYouTubePlayer.seekTo(newTime, true);
                         showMessage('Skipped 5 seconds back.');
                         break;
-                    case 'ArrowRight': // Right arrow key
+                    case 'ArrowRight': // Right arrow key: skip forward 5 seconds
                         newTime = Math.min(duration, currentTime + 5);
-                        currentVideoPlayer.seekTo(newTime, true);
+                        currentYouTubePlayer.seekTo(newTime, true);
                         showMessage('Skipped 5 seconds forward.');
                         break;
-                    case ' ': // Spacebar for play/pause
-                        event.preventDefault();
-                        if (currentVideoPlayer.getPlayerState() === YT.PlayerState.PLAYING || currentVideoPlayer.getPlayerState() === YT.PlayerState.BUFFERING) {
-                            currentVideoPlayer.pauseVideo();
+                    case ' ': // Spacebar: toggle play/pause
+                        if (playerState === YT.PlayerState.PLAYING || playerState === YT.PlayerState.BUFFERING) {
+                            currentYouTubePlayer.pauseVideo();
                         } else {
-                            currentVideoPlayer.playVideo();
+                            currentYouTubePlayer.playVideo();
                         }
                         break;
                 }
             }
         });
 
-        // --- Overlay Visibility Logic ---
+        // --- Overlay Visibility Logic (Mouse & Touch) ---
 
         // Desktop: Show on mouse enter, hide on mouse leave (if playing)
         videoPlayerWrapper.addEventListener('mouseenter', showOverlayAndStartTimer);
         videoPlayerWrapper.addEventListener('mouseleave', () => {
-            if (currentVideoPlayer && currentVideoPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+            if (currentYouTubePlayer && typeof currentYouTubePlayer.getPlayerState === 'function' && currentYouTubePlayer.getPlayerState() === YT.PlayerState.PLAYING) {
                 hideOverlayAutomatically();
             } else {
-                // If paused, controls should remain visible until user explicitly hides them or plays
-                clearTimeout(overlayHideTimeout); // Clear any pending hide
+                clearTimeout(overlayHideTimeout);
             }
         });
 
-        // Mobile/Touch: Toggle on click/tap
+        // Mobile/Touch: Toggle on single click/tap
         videoPlayerWrapper.addEventListener('click', function(event) {
             const isTouchDevice = ('ontouchstart' in window || navigator.maxTouchPoints > 0);
-            // Only trigger this logic for touch devices or small screens
             if (isTouchDevice || window.innerWidth < 768) {
-                // Prevent click on controls from toggling the overlay immediately
-                if (event.target.closest('.control-button, .custom-select, .volume-slider, .progress-bar-container, #videoUrlInput, #loadVideoBtn')) {
-                    keepOverlayVisible(); // Keep visible if interacting with controls
+                // If a control button or input is clicked, keep overlay visible
+                if (event.target.closest('.control-button, .custom-select, .volume-slider, .progress-bar-container, .video-input-group')) {
+                    keepOverlayVisible();
                     return;
                 }
 
-                if (videoOverlayControls.classList.contains('active')) {
-                    // If active, hide it immediately on second tap
-                    videoOverlayControls.classList.remove('active');
+                // Otherwise, toggle overlay visibility
+                if (youtubeOverlayControls.classList.contains('active')) {
+                    youtubeOverlayControls.classList.remove('active');
                     clearTimeout(overlayHideTimeout);
                 } else {
-                    // If not active, show it and start timer
                     showOverlayAndStartTimer();
                 }
             }
         });
 
         // Add listeners to controls to keep overlay visible during interaction
-        const interactiveElements = document.querySelectorAll('.control-button, .custom-select select, .volume-slider, .progress-bar-container');
+        const interactiveElements = document.querySelectorAll('.control-button, .custom-select select, .volume-slider, .progress-bar-container, .video-input-group input, .video-input-group button');
         interactiveElements.forEach(element => {
-            // For mouse interaction (desktop)
             element.addEventListener('mouseover', keepOverlayVisible);
             element.addEventListener('mouseout', () => {
-                if (currentVideoPlayer && currentVideoPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+                if (currentYouTubePlayer && typeof currentYouTubePlayer.getPlayerState === 'function' && currentYouTubePlayer.getPlayerState() === YT.PlayerState.PLAYING) {
                     hideOverlayAutomatically();
                 }
             });
 
-            // For touch interaction (mobile)
             element.addEventListener('touchstart', keepOverlayVisible);
             element.addEventListener('touchend', () => {
-                if (currentVideoPlayer && currentVideoPlayer.getPlayerState() === YT.PlayerState.PLAYING) {
+                if (currentYouTubePlayer && typeof currentYouTubePlayer.getPlayerState === 'function' && currentYouTubePlayer.getPlayerState() === YT.PlayerState.PLAYING) {
                     hideOverlayAutomatically();
                 }
             });
-        });
-
-        // Ensure responsiveness on window resize
-        window.addEventListener('resize', function() {
-            // The aspect-ratio and width:100% in CSS handle most of it.
-            // No specific JS adjustments needed for player size here.
         });
 
     </script>
