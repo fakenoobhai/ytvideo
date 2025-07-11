@@ -357,51 +357,62 @@
                 font-size: 0.75rem; /* Smaller font size for mobile buttons */
             }
             .video-overlay-controls {
-                padding: 0.75rem 1rem;
+                padding: 0.2rem 0.4rem; /* Reduced padding */
             }
             .controls-row {
-                flex-direction: column; /* Stack controls vertically */
-                gap: 0.8rem; /* Space between stacked controls */
+                flex-direction: row; /* Keep row for main controls */
+                justify-content: space-around;
+                align-items: center;
+                gap: 0.2rem; /* Reduced gap */
             }
             .control-button, .custom-select select {
-                padding: 0.5rem 1rem; /* Smaller padding for mobile buttons and selects */
-                font-size: 0.75rem; /* Smaller font size for mobile buttons and selects */
-                gap: 0.5rem;
-                width: 100%; /* Make buttons full width */
+                padding: 0.2rem 0.3rem; /* Smaller padding for mobile buttons and selects */
+                font-size: 0.6rem; /* Smaller font size for mobile buttons and selects */
+                gap: 0.2rem;
+                /* Removed width: 100% to allow them to be in a row */
             }
             .control-button.icon-only {
-                width: 36px; /* Smaller fixed width for icon-only buttons on mobile */
-                height: 36px; /* Smaller fixed height for icon-only buttons on mobile */
-                font-size: 1rem; /* Smaller icon size on mobile */
+                width: 26px; /* Reduced size */
+                height: 26px; /* Reduced size */
+                font-size: 0.8rem; /* Reduced font size */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
             }
             .custom-select {
-                width: 100%; /* Make select full width */
+                flex-grow: 1;
+                min-width: 50px; /* Reduced min-width */
             }
             .custom-select::after {
-                right: 0.8rem;
-                font-size: 0.9rem;
+                right: 0.2rem; /* Adjusted arrow position */
+                font-size: 0.5rem; /* Reduced arrow size */
             }
             .volume-control {
-                width: 100%; /* Make volume control full width */
-                justify-content: center; /* Center volume icon and slider */
+                width: auto;
+                flex-grow: 1;
+                justify-content: flex-start;
+                gap: 0.1rem; /* Reduced gap */
             }
             .volume-slider-container {
-                width: calc(100% - 60px); /* Adjust width to fit next to mute button */
-                max-width: 150px; /* Limit max width for slider */
+                width: 100%;
+                max-width: 70px; /* Reduced max-width */
             }
             .volume-slider {
-                width: 100%; /* Ensure slider takes full width of its container */
+                height: 0.2rem; /* Reduced height */
+            }
+            .volume-slider::-webkit-slider-thumb, .volume-slider::-moz-range-thumb {
+                width: 0.7rem; /* Reduced thumb size */
+                height: 0.7rem; /* Reduced thumb size */
             }
             .time-display {
-                font-size: 0.8rem;
-                min-width: 80px;
+                font-size: 0.55rem; /* Reduced font size */
+                min-width: 50px; /* Adjusted min-width */
             }
             .progress-bar-container {
-                height: 0.6rem;
+                height: 0.2rem; /* Reduced height */
             }
             .progress-tooltip, .volume-tooltip {
-                font-size: 0.7rem;
-                top: -25px;
+                font-size: 0.5rem; /* Reduced font size */
+                top: -10px; /* Adjusted position */
+                padding: 1px 3px; /* Reduced padding */
             }
         }
     </style>
